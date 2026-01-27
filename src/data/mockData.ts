@@ -1,0 +1,156 @@
+import { Star, Trophy, Zap, Code, Palette, Puzzle, Gamepad2 } from "lucide-react";
+
+export const courseCategories = [
+  { id: "coding", name: "Coding", icon: Code, color: "bg-secondary" },
+  { id: "uiux", name: "UI/UX Design", icon: Palette, color: "bg-funPink" },
+  { id: "logic", name: "Logic & Thinking", icon: Puzzle, color: "bg-success" },
+  { id: "games", name: "Game Challenges", icon: Gamepad2, color: "bg-badge" },
+];
+
+export const ageGroups = [
+  { id: "6-8", label: "Ages 6-8", description: "Little Explorers" },
+  { id: "9-11", label: "Ages 9-11", description: "Young Builders" },
+  { id: "12-14", label: "Ages 12-14", description: "Tech Pioneers" },
+];
+
+export const sampleCourses = [
+  {
+    id: "1",
+    title: "Block Coding Adventure",
+    description: "Learn to code with colorful blocks! Perfect for beginners.",
+    category: "coding",
+    ageGroup: "6-8",
+    difficulty: "beginner",
+    totalLessons: 12,
+    completedLessons: 5,
+    stars: 3,
+    thumbnail: "🧩",
+  },
+  {
+    id: "2",
+    title: "Color Magic Studio",
+    description: "Discover the magic of colors and create beautiful designs!",
+    category: "uiux",
+    ageGroup: "6-8",
+    difficulty: "beginner",
+    totalLessons: 8,
+    completedLessons: 8,
+    stars: 5,
+    thumbnail: "🎨",
+  },
+  {
+    id: "3",
+    title: "Puzzle Master",
+    description: "Solve fun puzzles and train your brain like a champion!",
+    category: "logic",
+    ageGroup: "9-11",
+    difficulty: "intermediate",
+    totalLessons: 15,
+    completedLessons: 7,
+    stars: 4,
+    thumbnail: "🧠",
+  },
+  {
+    id: "4",
+    title: "Game Designer Jr.",
+    description: "Create your own games and become a game designer!",
+    category: "games",
+    ageGroup: "9-11",
+    difficulty: "intermediate",
+    totalLessons: 20,
+    completedLessons: 0,
+    stars: 0,
+    thumbnail: "🎮",
+  },
+  {
+    id: "5",
+    title: "App Builder Pro",
+    description: "Build real apps and learn professional coding skills!",
+    category: "coding",
+    ageGroup: "12-14",
+    difficulty: "advanced",
+    totalLessons: 25,
+    completedLessons: 12,
+    stars: 4,
+    thumbnail: "📱",
+  },
+  {
+    id: "6",
+    title: "UX Hero Academy",
+    description: "Learn how to design apps that everyone loves!",
+    category: "uiux",
+    ageGroup: "12-14",
+    difficulty: "advanced",
+    totalLessons: 18,
+    completedLessons: 3,
+    stars: 2,
+    thumbnail: "✨",
+  },
+];
+
+export const sampleAchievements = [
+  { id: "1", name: "First Steps", icon: "🌟", earned: true, description: "Complete your first lesson" },
+  { id: "2", name: "Code Wizard", icon: "🧙", earned: true, description: "Complete 10 coding lessons" },
+  { id: "3", name: "Perfect Score", icon: "💯", earned: true, description: "Get 100% on any quiz" },
+  { id: "4", name: "Super Learner", icon: "🚀", earned: false, description: "Complete 5 courses" },
+  { id: "5", name: "Design Star", icon: "⭐", earned: false, description: "Finish all UI/UX lessons" },
+  { id: "6", name: "Brain Master", icon: "🧠", earned: false, description: "Solve 50 puzzles" },
+];
+
+export const sampleStudentProfile = {
+  id: "1",
+  name: "Alex",
+  avatar: "🦊",
+  level: 7,
+  xp: 2450,
+  xpToNextLevel: 3000,
+  totalStars: 45,
+  completedCourses: 2,
+  currentStreak: 5,
+  badges: ["🌟", "🧙", "💯"],
+};
+
+export const sampleLessons = [
+  {
+    id: "1",
+    title: "Say Hello!",
+    type: "coding",
+    completed: true,
+    stars: 3,
+    description: "Learn to make your character say hello!",
+  },
+  {
+    id: "2",
+    title: "Move Forward",
+    type: "coding",
+    completed: true,
+    stars: 3,
+    description: "Help your character take their first steps!",
+  },
+  {
+    id: "3",
+    title: "Turn Around",
+    type: "coding",
+    completed: true,
+    stars: 2,
+    description: "Learn to make your character turn!",
+  },
+  {
+    id: "4",
+    title: "Repeat Magic",
+    type: "coding",
+    completed: false,
+    stars: 0,
+    description: "Discover the power of loops!",
+    current: true,
+  },
+  {
+    id: "5",
+    title: "If This, Then That",
+    type: "coding",
+    completed: false,
+    stars: 0,
+    description: "Make smart decisions with conditions!",
+    locked: true,
+  },
+];
