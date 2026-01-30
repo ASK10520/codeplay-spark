@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { Star, Play, CheckCircle } from "lucide-react";
+import { Star, Play, CheckCircle, Sparkles } from "lucide-react";
 import { courseCategories } from "@/data/mockData";
+import { EnrollmentDialog } from "@/components/enrollment/EnrollmentDialog";
 
 interface CourseCardProps {
   course: {
@@ -22,10 +24,21 @@ interface CourseCardProps {
 }
 
 export function CourseCard({ course, onClick }: CourseCardProps) {
+  const [enrollmentOpen, setEnrollmentOpen] = useState(false);
   const progress = (course.completedLessons / course.totalLessons) * 100;
   const isCompleted = progress === 100;
+  const isNotStarted = course.completedLessons === 0;
   const category = courseCategories.find(c => c.id === course.category);
   const CategoryIcon = category?.icon;
+
+  const handleButtonClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isNotStarted) {
+      setEnrollmentOpen(true);
+    } else if (onClick) {
+      onClick();
+    }
+  };
 
   return (
     <Card 
@@ -99,14 +112,38 @@ export function CourseCard({ course, onClick }: CourseCardProps) {
 
       <CardFooter className="p-4 pt-0">
         <Button 
-          variant={isCompleted ? "success" : "fun"} 
+          variant={isCompleted ? "success" : isNotStarted ? "hero" : "fun"} 
           className="w-full"
           size="sm"
+          onClick={handleButtonClick}
         >
-          <Play className="w-4 h-4" />
-          {isCompleted ? "Play Again" : progress > 0 ? "Continue" : "Start Learning"}
+          {isNotStarted ? (
+            <>
+              <Sparkles className="w-4 h-4" />
+              Enroll Now
+            </>
+          ) : (
+            <>
+              <Play className="w-4 h-4" />
+              {isCompleted ? "Play Again" : "Continue"}
+            </>
+          )}
         </Button>
       </CardFooter>
+
+      {/* Enrollment Dialog */}
+      <EnrollmentDialog
+        open={enrollmentOpen}
+        onOpenChange={setEnrollmentOpen}
+        course={{
+          id: course.id,
+          title: course.title,
+          thumbnail: course.thumbnail,
+          category: category?.name || course.category,
+          ageGroup: course.ageGroup,
+        }}
+        price={29.99}
+      />
     </Card>
   );
 }
