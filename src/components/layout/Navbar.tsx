@@ -8,7 +8,7 @@ import {
   LogIn,
   Sparkles
 } from "lucide-react";
-import mascotRobot from "@/assets/mascot-robot.png";
+import uxmmLogo from "@/assets/uxmm-hub-logo.jpg";
 
 export function Navbar() {
   const location = useLocation();
@@ -27,9 +27,9 @@ export function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
             <img 
-              src={mascotRobot} 
-              alt="CodePlay Mascot" 
-              className="w-10 h-10 md:w-12 md:h-12 transition-transform group-hover:scale-110 group-hover:rotate-6"
+              src={uxmmLogo} 
+              alt="UXMM Hub Logo" 
+              className="w-10 h-10 md:w-12 md:h-12 rounded-lg transition-transform group-hover:scale-110"
             />
             <span className="text-xl md:text-2xl font-fredoka font-bold text-gradient hidden sm:block">
               CodePlay Kids
