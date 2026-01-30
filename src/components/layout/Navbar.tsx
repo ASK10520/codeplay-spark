@@ -32,7 +32,7 @@ export function Navbar() {
               className="w-10 h-10 md:w-12 md:h-12 rounded-lg transition-transform group-hover:scale-110"
             />
             <span className="text-xl md:text-2xl font-fredoka font-bold text-gradient hidden sm:block">
-              CodePlay Kids
+              &lt;UXMM HUB&gt;
             </span>
           </Link>
 
