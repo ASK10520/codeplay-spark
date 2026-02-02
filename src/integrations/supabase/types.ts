@@ -14,7 +14,202 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      courses: {
+        Row: {
+          age_group: string
+          category: string
+          created_at: string
+          description: string | null
+          difficulty: string
+          id: string
+          is_premium: boolean | null
+          price: number | null
+          thumbnail: string | null
+          title: string
+          total_lessons: number
+        }
+        Insert: {
+          age_group: string
+          category: string
+          created_at?: string
+          description?: string | null
+          difficulty?: string
+          id?: string
+          is_premium?: boolean | null
+          price?: number | null
+          thumbnail?: string | null
+          title: string
+          total_lessons?: number
+        }
+        Update: {
+          age_group?: string
+          category?: string
+          created_at?: string
+          description?: string | null
+          difficulty?: string
+          id?: string
+          is_premium?: boolean | null
+          price?: number | null
+          thumbnail?: string | null
+          title?: string
+          total_lessons?: number
+        }
+        Relationships: []
+      }
+      enrollments: {
+        Row: {
+          child_age: number
+          child_name: string
+          completed_lessons: number | null
+          course_id: string
+          enrolled_at: string
+          id: string
+          parent_email: string
+          parent_name: string
+          payment_status: string
+          stars_earned: number | null
+          user_id: string
+        }
+        Insert: {
+          child_age: number
+          child_name: string
+          completed_lessons?: number | null
+          course_id: string
+          enrolled_at?: string
+          id?: string
+          parent_email: string
+          parent_name: string
+          payment_status?: string
+          stars_earned?: number | null
+          user_id: string
+        }
+        Update: {
+          child_age?: number
+          child_name?: string
+          completed_lessons?: number | null
+          course_id?: string
+          enrolled_at?: string
+          id?: string
+          parent_email?: string
+          parent_name?: string
+          payment_status?: string
+          stars_earned?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enrollments_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_emoji: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_emoji?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_emoji?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      subscription_plans: {
+        Row: {
+          created_at: string
+          description: string | null
+          features: Json | null
+          id: string
+          is_popular: boolean | null
+          name: string
+          price_monthly: number
+          price_yearly: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          features?: Json | null
+          id?: string
+          is_popular?: boolean | null
+          name: string
+          price_monthly: number
+          price_yearly: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          features?: Json | null
+          id?: string
+          is_popular?: boolean | null
+          name?: string
+          price_monthly?: number
+          price_yearly?: number
+        }
+        Relationships: []
+      }
+      user_subscriptions: {
+        Row: {
+          billing_cycle: string
+          created_at: string
+          current_period_end: string
+          current_period_start: string
+          id: string
+          plan_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          billing_cycle?: string
+          created_at?: string
+          current_period_end: string
+          current_period_start?: string
+          id?: string
+          plan_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          billing_cycle?: string
+          created_at?: string
+          current_period_end?: string
+          current_period_start?: string
+          id?: string
+          plan_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

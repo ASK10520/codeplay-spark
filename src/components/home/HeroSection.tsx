@@ -31,10 +31,10 @@ export function HeroSection() {
             </Badge>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-fredoka font-bold text-white mb-4 leading-tight">
-              Learn to{" "}
-              <span className="text-star">Code</span>
+              Learn{" "}
+              <span className="text-star">Coding</span>
               <br />
-              Play & Create!
+              Through Play & Fun!
             </h1>
             
             <p className="text-lg md:text-xl text-white/90 mb-8 max-w-xl mx-auto lg:mx-0">
@@ -46,17 +46,17 @@ export function HeroSection() {
               <Link to="/courses">
                 <Button variant="playful" size="xl" className="gap-2">
                   <Rocket className="w-6 h-6" />
-                  Start Learning Free
+                  Enroll Course
                 </Button>
               </Link>
-              <Link to="/dashboard">
+              <Link to="/pricing">
                 <Button 
                   variant="outline" 
                   size="lg" 
                   className="border-white/30 text-white hover:bg-white/20 hover:text-white"
                 >
                   <Sparkles className="w-5 h-5" />
-                  View Demo
+                  Start Free Trial
                 </Button>
               </Link>
             </div>
