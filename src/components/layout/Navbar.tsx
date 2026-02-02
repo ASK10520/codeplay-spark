@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
   Home, 
@@ -6,19 +6,30 @@ import {
   Trophy, 
   User, 
   LogIn,
-  Sparkles
+  LogOut,
+  Sparkles,
+  CreditCard
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import uxmmLogo from "@/assets/uxmm-hub-logo.jpg";
 
 export function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   
   const navItems = [
     { path: "/", label: "Home", icon: Home },
     { path: "/courses", label: "Courses", icon: BookOpen },
+    { path: "/pricing", label: "Pricing", icon: CreditCard },
     { path: "/dashboard", label: "My Learning", icon: Sparkles },
     { path: "/achievements", label: "Achievements", icon: Trophy },
   ];
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <nav className="sticky top-0 z-50 bg-card/95 backdrop-blur-sm border-b-2 border-border shadow-card">
@@ -57,24 +68,41 @@ export function Navbar() {
 
           {/* Auth Buttons */}
           <div className="flex items-center gap-2">
-            <Link to="/login">
-              <Button variant="outline" size="sm">
-                <LogIn className="w-4 h-4" />
-                <span className="hidden sm:inline">Login</span>
-              </Button>
-            </Link>
-            <Link to="/signup">
-              <Button variant="fun" size="sm">
-                <User className="w-4 h-4" />
-                <span className="hidden sm:inline">Sign Up</span>
-              </Button>
-            </Link>
+            {user ? (
+              <>
+                <Link to="/dashboard">
+                  <Button variant="outline" size="sm">
+                    <User className="w-4 h-4" />
+                    <span className="hidden sm:inline">My Dashboard</span>
+                  </Button>
+                </Link>
+                <Button variant="ghost" size="sm" onClick={handleSignOut}>
+                  <LogOut className="w-4 h-4" />
+                  <span className="hidden sm:inline">Logout</span>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="outline" size="sm">
+                    <LogIn className="w-4 h-4" />
+                    <span className="hidden sm:inline">Login</span>
+                  </Button>
+                </Link>
+                <Link to="/signup">
+                  <Button variant="fun" size="sm">
+                    <User className="w-4 h-4" />
+                    <span className="hidden sm:inline">Sign Up</span>
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
 
         {/* Mobile Navigation */}
         <div className="md:hidden flex justify-around py-2 border-t border-border">
-          {navItems.map((item) => {
+          {navItems.slice(0, 4).map((item) => {
             const isActive = location.pathname === item.path;
             return (
               <Link key={item.path} to={item.path}>
