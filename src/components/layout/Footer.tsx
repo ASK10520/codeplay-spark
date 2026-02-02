@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import mascotRobot from "@/assets/mascot-robot.png";
+import uxmmLogo from "@/assets/uxmm-hub-logo.jpg";
 
 export function Footer() {
   return (
@@ -10,12 +10,12 @@ export function Footer() {
           <div className="md:col-span-1">
             <Link to="/" className="flex items-center gap-2 mb-4">
               <img 
-                src={mascotRobot} 
-                alt="CodePlay Mascot" 
-                className="w-12 h-12"
+                src={uxmmLogo} 
+                alt="UXMM Hub Logo" 
+                className="w-12 h-12 rounded-lg"
               />
               <span className="text-xl font-fredoka font-bold text-gradient">
-                CodePlay Kids
+                &lt;UXMM HUB&gt;
               </span>
             </Link>
             <p className="text-muted-foreground text-sm">

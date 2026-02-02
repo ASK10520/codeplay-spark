@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -7,12 +8,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { EnrollmentDialog } from "@/components/enrollment/EnrollmentDialog";
 import { sampleCourses, sampleLessons, courseCategories } from "@/data/mockData";
-import { ArrowLeft, Play, Star, Clock, Users } from "lucide-react";
+import { ArrowLeft, Play, Star, Clock, Users, Sparkles } from "lucide-react";
 
 const CourseDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [enrollmentOpen, setEnrollmentOpen] = useState(false);
   
   const course = sampleCourses.find((c) => c.id === id);
   const category = courseCategories.find((c) => c.id === course?.category);
@@ -96,11 +99,23 @@ const CourseDetail = () => {
                     <Progress value={progress} variant="course" size="lg" />
                   </div>
                   
-                  {/* CTA */}
-                  <Button variant="fun" size="lg" className="w-full">
-                    <Play className="w-5 h-5" />
-                    {progress > 0 ? "Continue Learning" : "Start Course"}
-                  </Button>
+                  {/* CTA Buttons */}
+                  {progress > 0 ? (
+                    <Button variant="fun" size="lg" className="w-full">
+                      <Play className="w-5 h-5" />
+                      Continue Learning
+                    </Button>
+                  ) : (
+                    <Button 
+                      variant="hero" 
+                      size="lg" 
+                      className="w-full"
+                      onClick={() => setEnrollmentOpen(true)}
+                    >
+                      <Sparkles className="w-5 h-5" />
+                      Enroll Now - $29.99
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             </div>
@@ -126,6 +141,22 @@ const CourseDetail = () => {
         </Section>
       </main>
       <Footer />
+
+      {/* Enrollment Dialog */}
+      {course && (
+        <EnrollmentDialog
+          open={enrollmentOpen}
+          onOpenChange={setEnrollmentOpen}
+          course={{
+            id: course.id,
+            title: course.title,
+            thumbnail: course.thumbnail,
+            category: category?.name || course.category,
+            ageGroup: course.ageGroup,
+          }}
+          price={29.99}
+        />
+      )}
     </div>
   );
 };

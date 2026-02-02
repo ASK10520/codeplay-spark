@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Courses from "./pages/Courses";
 import CourseDetail from "./pages/CourseDetail";
@@ -12,6 +13,7 @@ import Achievements from "./pages/Achievements";
 import LessonPlayground from "./pages/LessonPlayground";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Pricing from "./pages/Pricing";
 import ParentDashboard from "./pages/ParentDashboard";
 import TeacherDashboard from "./pages/TeacherDashboard";
 import NotFound from "./pages/NotFound";
@@ -28,6 +30,7 @@ const queryClient = new QueryClient({
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+<<<<<<< HEAD
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <TooltipProvider>
         {/* In-house toast (radix) */}
@@ -35,6 +38,12 @@ const App = () => (
         {/* Sonner-based toast (reads theme via next-themes) */}
         <SonnerToaster />
 
+=======
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+>>>>>>> refs/remotes/origin/main
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
@@ -45,6 +54,10 @@ const App = () => (
             <Route path="/lesson/:id" element={<LessonPlayground />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+<<<<<<< HEAD
+=======
+            <Route path="/pricing" element={<Pricing />} />
+>>>>>>> refs/remotes/origin/main
             <Route path="/parent" element={<ParentDashboard />} />
             <Route path="/teacher" element={<TeacherDashboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
@@ -52,7 +65,11 @@ const App = () => (
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
+<<<<<<< HEAD
     </ThemeProvider>
+=======
+    </AuthProvider>
+>>>>>>> refs/remotes/origin/main
   </QueryClientProvider>
 );
 
