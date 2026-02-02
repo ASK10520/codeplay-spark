@@ -20,9 +20,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, CreditCard, User, ArrowLeft, ArrowRight, Lock, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 
 interface Course {
   id: string;
@@ -54,8 +51,6 @@ export function EnrollmentDialog({
   price = 29.99,
 }: EnrollmentDialogProps) {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState<Step>("details");
   const [isProcessing, setIsProcessing] = useState(false);
   
@@ -75,6 +70,7 @@ export function EnrollmentDialog({
 
   const updateFormData = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    // Clear error when user types
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
     }
@@ -122,17 +118,7 @@ export function EnrollmentDialog({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleNext = async () => {
-    if (!user) {
-      toast({
-        title: "Sign in required",
-        description: "Please sign in or create an account to enroll",
-      });
-      onOpenChange(false);
-      navigate("/signup");
-      return;
-    }
-
+  const handleNext = () => {
     if (currentStep === "details") {
       if (validateDetailsStep()) {
         setCurrentStep("payment");
@@ -140,39 +126,11 @@ export function EnrollmentDialog({
     } else if (currentStep === "payment") {
       if (validatePaymentStep()) {
         setIsProcessing(true);
-        
-        // Save enrollment to database
-        const { error } = await supabase.from("enrollments").insert({
-          user_id: user.id,
-          course_id: course.id,
-          child_name: formData.childName,
-          child_age: parseInt(formData.childAge),
-          parent_name: formData.parentName,
-          parent_email: formData.email,
-          payment_status: "completed",
-        });
-
-        if (error) {
+        // Simulate payment processing
+        setTimeout(() => {
           setIsProcessing(false);
-          if (error.code === "23505") {
-            toast({
-              title: "Already enrolled",
-              description: "You're already enrolled in this course!",
-              variant: "destructive",
-            });
-          } else {
-            console.error("Enrollment error:", error);
-            toast({
-              title: "Enrollment failed",
-              description: "Something went wrong. Please try again.",
-              variant: "destructive",
-            });
-          }
-          return;
-        }
-
-        setIsProcessing(false);
-        setCurrentStep("confirmation");
+          setCurrentStep("confirmation");
+        }, 2000);
       }
     }
   };
@@ -189,6 +147,7 @@ export function EnrollmentDialog({
   };
 
   const handleClose = () => {
+    // Reset form when closing
     setCurrentStep("details");
     setFormData({
       childName: "",
@@ -529,9 +488,9 @@ export function EnrollmentDialog({
                 )}
               </Button>
             ) : (
-              <Button variant="fun" onClick={handleComplete} className="flex-1">
+              <Button variant="success" onClick={handleComplete} className="flex-1">
                 <Sparkles className="w-4 h-4" />
-                Start Learning!
+                Go to Dashboard
               </Button>
             )}
           </div>

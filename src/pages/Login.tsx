@@ -1,59 +1,21 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/hooks/use-toast";
-import uxmmLogo from "@/assets/uxmm-hub-logo.jpg";
+import mascotRobot from "@/assets/mascot-robot.png";
 import { ArrowLeft, LogIn, Mail, Lock } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { signIn, user } = useAuth();
-  const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  // Redirect if already logged in
-  if (user) {
-    navigate("/dashboard");
-    return null;
-  }
-
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!email || !password) {
-      toast({
-        title: "Missing fields",
-        description: "Please enter your email and password",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setLoading(true);
-    const { error } = await signIn(email, password);
-    setLoading(false);
-
-    if (error) {
-      toast({
-        title: "Login failed",
-        description: error.message === "Invalid login credentials" 
-          ? "Email or password is incorrect" 
-          : error.message,
-        variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Welcome back! 👋",
-        description: "Ready to continue your adventure?",
-      });
-      navigate("/dashboard");
-    }
+    // Demo login - redirect to dashboard
+    navigate("/dashboard");
   };
 
   return (
@@ -81,9 +43,9 @@ const Login = () => {
           {/* Header */}
           <div className="gradient-hero p-6 text-center">
             <img 
-              src={uxmmLogo} 
-              alt="UXMM Hub Logo" 
-              className="w-20 h-20 mx-auto mb-3 rounded-xl object-cover"
+              src={mascotRobot} 
+              alt="CodePlay Mascot" 
+              className="w-20 h-20 mx-auto mb-3 animate-float"
             />
             <h1 className="text-2xl font-fredoka font-bold text-white">
               Welcome Back! 👋
@@ -97,7 +59,7 @@ const Login = () => {
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email" className="font-semibold">
-                  Email
+                  Email or Username
                 </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -108,7 +70,6 @@ const Login = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="pl-10"
-                    disabled={loading}
                   />
                 </div>
               </div>
@@ -126,23 +87,13 @@ const Login = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="pl-10"
-                    disabled={loading}
                   />
                 </div>
               </div>
 
-              <Button type="submit" variant="fun" size="lg" className="w-full" disabled={loading}>
-                {loading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Signing in...
-                  </>
-                ) : (
-                  <>
-                    <LogIn className="w-5 h-5" />
-                    Let's Go!
-                  </>
-                )}
+              <Button type="submit" variant="fun" size="lg" className="w-full">
+                <LogIn className="w-5 h-5" />
+                Let's Go!
               </Button>
             </form>
 
