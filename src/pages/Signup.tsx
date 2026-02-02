@@ -4,92 +4,26 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/hooks/use-toast";
-import uxmmLogo from "@/assets/uxmm-hub-logo.jpg";
+import mascotRobot from "@/assets/mascot-robot.png";
 import { ArrowLeft, UserPlus, Mail, Lock, User, Cake } from "lucide-react";
 
 const Signup = () => {
   const navigate = useNavigate();
-  const { signUp, user } = useAuth();
-  const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     age: "",
     password: "",
-    confirmPassword: "",
   });
+
+  const handleSignup = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Demo signup - redirect to dashboard
+    navigate("/dashboard");
+  };
 
   const avatars = ["🦊", "🐼", "🦁", "🐸", "🐱", "🐶", "🦄", "🐯"];
   const [selectedAvatar, setSelectedAvatar] = useState("🦊");
-
-  // Redirect if already logged in
-  if (user) {
-    navigate("/dashboard");
-    return null;
-  }
-
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!formData.name || !formData.email || !formData.password) {
-      toast({
-        title: "Missing fields",
-        description: "Please fill in all required fields",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      toast({
-        title: "Password too short",
-        description: "Password must be at least 6 characters",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      toast({
-        title: "Passwords don't match",
-        description: "Please make sure your passwords match",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setLoading(true);
-    const { error } = await signUp(formData.email, formData.password, {
-      display_name: formData.name,
-      avatar_emoji: selectedAvatar,
-    });
-    setLoading(false);
-
-    if (error) {
-      if (error.message.includes("already registered")) {
-        toast({
-          title: "Account exists",
-          description: "This email is already registered. Try logging in instead.",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Signup failed",
-          description: error.message,
-          variant: "destructive",
-        });
-      }
-    } else {
-      toast({
-        title: "🎉 Welcome to UXMM Hub!",
-        description: "Please check your email to verify your account.",
-      });
-      navigate("/login");
-    }
-  };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -115,9 +49,9 @@ const Signup = () => {
           {/* Header */}
           <div className="gradient-success p-6 text-center">
             <img 
-              src={uxmmLogo} 
-              alt="UXMM Hub Logo" 
-              className="w-16 h-16 mx-auto mb-2 rounded-xl object-cover"
+              src={mascotRobot} 
+              alt="CodePlay Mascot" 
+              className="w-16 h-16 mx-auto mb-2 animate-float"
             />
             <h1 className="text-2xl font-fredoka font-bold text-white">
               Join the Adventure! 🚀
@@ -152,7 +86,7 @@ const Signup = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="name" className="font-semibold">
-                  Your Name *
+                  Your Name
                 </Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -163,7 +97,6 @@ const Signup = () => {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="pl-10"
-                    disabled={loading}
                   />
                 </div>
               </div>
@@ -183,14 +116,13 @@ const Signup = () => {
                     value={formData.age}
                     onChange={(e) => setFormData({ ...formData, age: e.target.value })}
                     className="pl-10"
-                    disabled={loading}
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="email" className="font-semibold">
-                  Parent's Email *
+                  Parent's Email
                 </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -201,14 +133,13 @@ const Signup = () => {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="pl-10"
-                    disabled={loading}
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="password" className="font-semibold">
-                  Password *
+                  Password
                 </Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -219,41 +150,13 @@ const Signup = () => {
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     className="pl-10"
-                    disabled={loading}
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="font-semibold">
-                  Confirm Password *
-                </Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    placeholder="Type your password again"
-                    value={formData.confirmPassword}
-                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                    className="pl-10"
-                    disabled={loading}
-                  />
-                </div>
-              </div>
-
-              <Button type="submit" variant="success" size="lg" className="w-full" disabled={loading}>
-                {loading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Creating account...
-                  </>
-                ) : (
-                  <>
-                    <UserPlus className="w-5 h-5" />
-                    Start Learning!
-                  </>
-                )}
+              <Button type="submit" variant="success" size="lg" className="w-full">
+                <UserPlus className="w-5 h-5" />
+                Start Learning!
               </Button>
             </form>
 
