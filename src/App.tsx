@@ -30,46 +30,31 @@ const queryClient = new QueryClient({
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-<<<<<<< HEAD
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <TooltipProvider>
-        {/* In-house toast (radix) */}
-        <Toaster />
-        {/* Sonner-based toast (reads theme via next-themes) */}
-        <SonnerToaster />
-
-=======
     <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
->>>>>>> refs/remotes/origin/main
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/courses" element={<Courses />} />
-            <Route path="/course/:id" element={<CourseDetail />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/achievements" element={<Achievements />} />
-            <Route path="/lesson/:id" element={<LessonPlayground />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-<<<<<<< HEAD
-=======
-            <Route path="/pricing" element={<Pricing />} />
->>>>>>> refs/remotes/origin/main
-            <Route path="/parent" element={<ParentDashboard />} />
-            <Route path="/teacher" element={<TeacherDashboard />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-<<<<<<< HEAD
-    </ThemeProvider>
-=======
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <TooltipProvider>
+          <Toaster />
+          <SonnerToaster />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/courses" element={<Courses />} />
+              <Route path="/course/:id" element={<CourseDetail />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/achievements" element={<Achievements />} />
+              <Route path="/lesson/:id" element={<LessonPlayground />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/parent" element={<ParentDashboard />} />
+              <Route path="/teacher" element={<TeacherDashboard />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
     </AuthProvider>
->>>>>>> refs/remotes/origin/main
   </QueryClientProvider>
 );
 

@@ -45,36 +45,36 @@ const Pricing = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchPlans();
-  }, []);
+    const fetchPlans = async () => {
+      const { data, error } = await supabase
+        .from("subscription_plans")
+        .select("*")
+        .order("price_monthly", { ascending: true });
 
-  const fetchPlans = async () => {
-    const { data, error } = await supabase
-      .from("subscription_plans")
-      .select("*")
-      .order("price_monthly", { ascending: true });
+      if (error) {
+        console.error("Error fetching plans:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load subscription plans",
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
 
-    if (error) {
-      console.error("Error fetching plans:", error);
-      toast({
-        title: "Error",
-        description: "Failed to load subscription plans",
-        variant: "destructive",
-      });
-      setLoading(false);
-      return;
-    
-    // Parse features from JSONB
-    const parsedPlans = data?.map((plan) => ({
-      ...plan,
-      features: Array.isArray(plan.features) 
-        ? (plan.features as unknown as string[])
-        : JSON.parse(String(plan.features) || "[]"),
-    })) || [];
+      // Parse features from JSONB
+      const parsedPlans = data?.map((plan) => ({
+        ...plan,
+        features: Array.isArray(plan.features)
+          ? (plan.features as unknown as string[])
+          : JSON.parse(String(plan.features) || "[]"),
+      })) || [];
       setPlans(parsedPlans);
-    }
-    setLoading(false);
-  };
+      setLoading(false);
+    };
+
+    fetchPlans();
+  }, [toast]);
 
   const handleSelectPlan = async (plan: SubscriptionPlan) => {
     if (!user) {
