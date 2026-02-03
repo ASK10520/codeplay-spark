@@ -16,11 +16,6 @@ export function Navbar() {
   const navItems = [
     { path: "/", label: "Home", icon: Home },
     { path: "/courses", label: "Courses", icon: BookOpen },
-<<<<<<< HEAD
-    { path: "/curriculum", label: "Curriculum", icon: BookOpen },
-    { path: "/pricing", label: "Pricing", icon: CreditCard },
-=======
->>>>>>> refs/remotes/origin/main
     { path: "/dashboard", label: "My Learning", icon: Sparkles },
     { path: "/achievements", label: "Achievements", icon: Trophy },
   ];
