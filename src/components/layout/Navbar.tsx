@@ -16,10 +16,7 @@ export function Navbar() {
   const navItems = [
     { path: "/", label: "Home", icon: Home },
     { path: "/courses", label: "Courses", icon: BookOpen },
-<<<<<<< HEAD
-=======
     { path: "/curriculum", label: "Curriculum", icon: BookOpen },
->>>>>>> 44e0bdd (Update Curriculum page UI and content)
     { path: "/dashboard", label: "My Learning", icon: Sparkles },
     { path: "/achievements", label: "Achievements", icon: Trophy },
   ];
