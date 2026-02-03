@@ -86,7 +86,7 @@ const CurriculumCatalog = () => {
                   <CurriculumCard
                     key={course.id}
                     course={course}
-                    onClick={() => navigate(`/course/${course.id}`)}
+                    onClick={() => navigate(`/curriculum/${course.id}`)}
                   />
                 ))}
               </div>
