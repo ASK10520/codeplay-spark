@@ -88,3 +88,7 @@ export function CurriculumHero() {
     </section>
   );
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 44e0bdd (Update Curriculum page UI and content)

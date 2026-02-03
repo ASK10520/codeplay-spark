@@ -30,8 +30,7 @@ export function CurriculumFilters({
   onDeviceChange,
   onLanguageChange,
   onClearAll,
-}: CurriculumFiltersProps) {
-  const hasActiveFilters = selectedGrade || selectedDuration || selectedTopic || selectedDevice || selectedLanguage;
+}: CurriculumFiltersProps) {  const hasActiveFilters = selectedGrade || selectedDuration || selectedTopic || selectedDevice || selectedLanguage;
 
   const deviceIcons = {
     mobile: Smartphone,
