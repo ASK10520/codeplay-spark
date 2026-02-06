@@ -6,7 +6,8 @@ import {
   Trophy, 
   User, 
   LogIn,
-  Sparkles
+  Sparkles,
+  Info
 } from "lucide-react";
 import uxmmLogo from "@/assets/uxmm-hub-logo.jpg";
 
@@ -19,6 +20,7 @@ export function Navbar() {
     { path: "/curriculum", label: "Curriculum", icon: BookOpen },
     { path: "/dashboard", label: "My Learning", icon: Sparkles },
     { path: "/achievements", label: "Achievements", icon: Trophy },
+    { path: "/about", label: "About", icon: Info },
   ];
 
   return (
