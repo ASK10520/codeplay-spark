@@ -6,13 +6,16 @@ import {
   Trophy, 
   User, 
   LogIn,
+  LogOut,
   Sparkles,
   Info
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import uxmmLogo from "@/assets/uxmm-hub-logo.jpg";
 
 export function Navbar() {
   const location = useLocation();
+  const { user, signOut, loading } = useAuth();
   
   const navItems = [
     { path: "/", label: "Home", icon: Home },
@@ -23,6 +26,10 @@ export function Navbar() {
     { path: "/about", label: "About", icon: Info },
   ];
 
+  const handleSignOut = async () => {
+    await signOut();
+  };
+
   return (
     <nav className="sticky top-0 z-50 bg-card/95 backdrop-blur-sm border-b-2 border-border shadow-card">
       <div className="container mx-auto px-4">
@@ -31,7 +38,7 @@ export function Navbar() {
           <Link to="/" className="flex items-center group">
             <img 
               src={uxmmLogo} 
-              alt="UXMM Hub Logo" 
+              alt="Astro Hub Logo" 
               className="w-10 h-10 md:w-12 md:h-12 rounded-lg transition-transform group-hover:scale-110"
             />
           </Link>
@@ -57,18 +64,27 @@ export function Navbar() {
 
           {/* Auth Buttons */}
           <div className="flex items-center gap-2">
-            <Link to="/login">
-              <Button variant="outline" size="sm">
-                <LogIn className="w-4 h-4" />
-                <span className="hidden sm:inline">Login</span>
+            {!loading && user ? (
+              <Button variant="outline" size="sm" onClick={handleSignOut}>
+                <LogOut className="w-4 h-4" />
+                <span className="hidden sm:inline">Logout</span>
               </Button>
-            </Link>
-            <Link to="/signup">
-              <Button variant="fun" size="sm">
-                <User className="w-4 h-4" />
-                <span className="hidden sm:inline">Sign Up</span>
-              </Button>
-            </Link>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="outline" size="sm">
+                    <LogIn className="w-4 h-4" />
+                    <span className="hidden sm:inline">Login</span>
+                  </Button>
+                </Link>
+                <Link to="/signup">
+                  <Button variant="fun" size="sm">
+                    <User className="w-4 h-4" />
+                    <span className="hidden sm:inline">Sign Up</span>
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
 

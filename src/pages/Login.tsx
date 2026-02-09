@@ -1,20 +1,57 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import mascotRobot from "@/assets/mascot-robot.png";
 import { ArrowLeft, LogIn, Mail, Lock } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { signIn } = useAuth();
+  const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Demo login - redirect to dashboard
+
+    if (!email || !password) {
+      toast({
+        title: "Missing fields",
+        description: "Please enter both email and password.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    const { error } = await signIn(email, password);
+    setIsLoading(false);
+
+    if (error) {
+      let message = "An error occurred during login.";
+      if (error.message.includes("Invalid login credentials")) {
+        message = "Invalid email or password. Please try again.";
+      } else if (error.message.includes("Email not confirmed")) {
+        message = "Please confirm your email before logging in.";
+      }
+      toast({
+        title: "Login Failed",
+        description: message,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Welcome back! 🎉",
+      description: "You are now logged in.",
+    });
     navigate("/dashboard");
   };
 
@@ -44,7 +81,7 @@ const Login = () => {
           <div className="gradient-hero p-6 text-center">
             <img 
               src={mascotRobot} 
-              alt="CodePlay Mascot" 
+              alt="Astro Hub Mascot" 
               className="w-20 h-20 mx-auto mb-3 animate-float"
             />
             <h1 className="text-2xl font-fredoka font-bold text-white">
@@ -59,7 +96,7 @@ const Login = () => {
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email" className="font-semibold">
-                  Email or Username
+                  Email
                 </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -70,6 +107,7 @@ const Login = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="pl-10"
+                    disabled={isLoading}
                   />
                 </div>
               </div>
@@ -87,13 +125,14 @@ const Login = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="pl-10"
+                    disabled={isLoading}
                   />
                 </div>
               </div>
 
-              <Button type="submit" variant="fun" size="lg" className="w-full">
+              <Button type="submit" variant="fun" size="lg" className="w-full" disabled={isLoading}>
                 <LogIn className="w-5 h-5" />
-                Let's Go!
+                {isLoading ? "Logging in..." : "Let's Go!"}
               </Button>
             </form>
 
@@ -104,21 +143,6 @@ const Login = () => {
                   Sign Up
                 </Link>
               </p>
-            </div>
-
-            {/* Role selection hint */}
-            <div className="mt-6 p-4 bg-muted rounded-xl">
-              <p className="text-xs text-muted-foreground text-center mb-2">
-                👨‍👩‍👧 Are you a Parent or Teacher?
-              </p>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" className="flex-1 text-xs" asChild>
-                  <Link to="/parent">Parent Login</Link>
-                </Button>
-                <Button variant="outline" size="sm" className="flex-1 text-xs" asChild>
-                  <Link to="/teacher">Teacher Login</Link>
-                </Button>
-              </div>
             </div>
           </CardContent>
         </Card>

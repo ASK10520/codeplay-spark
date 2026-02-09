@@ -19,8 +19,10 @@ export type Database = {
           age_group: string
           category: string
           created_at: string
+          created_by: string | null
           description: string | null
           difficulty: string
+          grade: string | null
           id: string
           is_premium: boolean | null
           price: number | null
@@ -32,8 +34,10 @@ export type Database = {
           age_group: string
           category: string
           created_at?: string
+          created_by?: string | null
           description?: string | null
           difficulty?: string
+          grade?: string | null
           id?: string
           is_premium?: boolean | null
           price?: number | null
@@ -45,8 +49,10 @@ export type Database = {
           age_group?: string
           category?: string
           created_at?: string
+          created_by?: string | null
           description?: string | null
           difficulty?: string
+          grade?: string | null
           id?: string
           is_premium?: boolean | null
           price?: number | null
@@ -99,6 +105,44 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "enrollments_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lessons: {
+        Row: {
+          content: string | null
+          course_id: string
+          created_at: string
+          id: string
+          order_index: number
+          title: string
+          video_url: string | null
+        }
+        Insert: {
+          content?: string | null
+          course_id: string
+          created_at?: string
+          id?: string
+          order_index?: number
+          title: string
+          video_url?: string | null
+        }
+        Update: {
+          content?: string | null
+          course_id?: string
+          created_at?: string
+          id?: string
+          order_index?: number
+          title?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lessons_course_id_fkey"
             columns: ["course_id"]
             isOneToOne: false
             referencedRelation: "courses"
@@ -166,6 +210,57 @@ export type Database = {
         }
         Relationships: []
       }
+      teachers: {
+        Row: {
+          bio: string | null
+          created_at: string
+          id: string
+          name: string
+          name_mm: string | null
+          photo_url: string | null
+          role: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          name_mm?: string | null
+          photo_url?: string | null
+          role?: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          name_mm?: string | null
+          photo_url?: string | null
+          role?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_subscriptions: {
         Row: {
           billing_cycle: string
@@ -215,10 +310,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "teacher" | "student"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -345,6 +446,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "teacher", "student"],
+    },
   },
 } as const

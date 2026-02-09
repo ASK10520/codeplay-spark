@@ -4,26 +4,81 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import mascotRobot from "@/assets/mascot-robot.png";
-import { ArrowLeft, UserPlus, Mail, Lock, User, Cake } from "lucide-react";
+import { ArrowLeft, UserPlus, Mail, Lock, User } from "lucide-react";
 
 const Signup = () => {
   const navigate = useNavigate();
+  const { signUp } = useAuth();
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    age: "",
     password: "",
+    confirmPassword: "",
   });
-
-  const handleSignup = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Demo signup - redirect to dashboard
-    navigate("/dashboard");
-  };
+  const [isLoading, setIsLoading] = useState(false);
 
   const avatars = ["🦊", "🐼", "🦁", "🐸", "🐱", "🐶", "🦄", "🐯"];
   const [selectedAvatar, setSelectedAvatar] = useState("🦊");
+
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formData.name || !formData.email || !formData.password) {
+      toast({
+        title: "Missing fields",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      toast({
+        title: "Password too short",
+        description: "Password must be at least 6 characters.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      toast({
+        title: "Passwords don't match",
+        description: "Please make sure your passwords match.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    const { error } = await signUp(formData.email, formData.password, formData.name, selectedAvatar);
+    setIsLoading(false);
+
+    if (error) {
+      let message = "An error occurred during sign up.";
+      if (error.message.includes("already registered")) {
+        message = "This email is already registered. Please log in instead.";
+      } else if (error.message.includes("valid email")) {
+        message = "Please enter a valid email address.";
+      }
+      toast({
+        title: "Sign Up Failed",
+        description: message,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Account Created! 🎉",
+      description: "Please check your email to confirm your account, then log in.",
+    });
+    navigate("/login");
+  };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -50,7 +105,7 @@ const Signup = () => {
           <div className="gradient-success p-6 text-center">
             <img 
               src={mascotRobot} 
-              alt="CodePlay Mascot" 
+              alt="Astro Hub Mascot" 
               className="w-16 h-16 mx-auto mb-2 animate-float"
             />
             <h1 className="text-2xl font-fredoka font-bold text-white">
@@ -97,42 +152,25 @@ const Signup = () => {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="pl-10"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="age" className="font-semibold">
-                  Your Age
-                </Label>
-                <div className="relative">
-                  <Cake className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                  <Input
-                    id="age"
-                    type="number"
-                    min="6"
-                    max="14"
-                    placeholder="How old are you?"
-                    value={formData.age}
-                    onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-                    className="pl-10"
+                    disabled={isLoading}
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="email" className="font-semibold">
-                  Parent's Email
+                  Email Address
                 </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <Input
                     id="email"
                     type="email"
-                    placeholder="Parent's email address"
+                    placeholder="Enter your email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="pl-10"
+                    disabled={isLoading}
                   />
                 </div>
               </div>
@@ -146,17 +184,36 @@ const Signup = () => {
                   <Input
                     id="password"
                     type="password"
-                    placeholder="Create a secret password"
+                    placeholder="Create a password (min 6 chars)"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     className="pl-10"
+                    disabled={isLoading}
                   />
                 </div>
               </div>
 
-              <Button type="submit" variant="success" size="lg" className="w-full">
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword" className="font-semibold">
+                  Confirm Password
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="Confirm your password"
+                    value={formData.confirmPassword}
+                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                    className="pl-10"
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+
+              <Button type="submit" variant="success" size="lg" className="w-full" disabled={isLoading}>
                 <UserPlus className="w-5 h-5" />
-                Start Learning!
+                {isLoading ? "Creating account..." : "Start Learning!"}
               </Button>
             </form>
 
