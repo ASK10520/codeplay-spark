@@ -8,14 +8,15 @@ import {
   LogIn,
   LogOut,
   Sparkles,
-  Info
+  Info,
+  Shield
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import uxmmLogo from "@/assets/uxmm-hub-logo.jpg";
 
 export function Navbar() {
   const location = useLocation();
-  const { user, signOut, loading } = useAuth();
+  const { user, signOut, loading, hasRole } = useAuth();
   
   const navItems = [
     { path: "/", label: "Home", icon: Home },
@@ -24,6 +25,7 @@ export function Navbar() {
     { path: "/dashboard", label: "My Learning", icon: Sparkles },
     { path: "/achievements", label: "Achievements", icon: Trophy },
     { path: "/about", label: "About", icon: Info },
+    ...(hasRole("admin") ? [{ path: "/admin/payments", label: "Admin", icon: Shield }] : []),
   ];
 
   const handleSignOut = async () => {

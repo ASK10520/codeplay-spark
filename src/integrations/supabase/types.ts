@@ -26,6 +26,7 @@ export type Database = {
           id: string
           is_premium: boolean | null
           price: number | null
+          price_mmk: number | null
           thumbnail: string | null
           title: string
           total_lessons: number
@@ -41,6 +42,7 @@ export type Database = {
           id?: string
           is_premium?: boolean | null
           price?: number | null
+          price_mmk?: number | null
           thumbnail?: string | null
           title: string
           total_lessons?: number
@@ -56,6 +58,7 @@ export type Database = {
           id?: string
           is_premium?: boolean | null
           price?: number | null
+          price_mmk?: number | null
           thumbnail?: string | null
           title?: string
           total_lessons?: number
@@ -143,6 +146,103 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "lessons_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_audit_log: {
+        Row: {
+          action: string
+          created_at: string
+          details: string | null
+          id: string
+          payment_submission_id: string
+          performed_by: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: string | null
+          id?: string
+          payment_submission_id: string
+          performed_by: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: string | null
+          id?: string
+          payment_submission_id?: string
+          performed_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_audit_log_payment_submission_id_fkey"
+            columns: ["payment_submission_id"]
+            isOneToOne: false
+            referencedRelation: "payment_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_submissions: {
+        Row: {
+          course_fee: number
+          course_id: string
+          created_at: string
+          id: string
+          payment_method: string
+          phone_number: string | null
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          slip_url: string
+          status: string
+          student_name: string
+          transaction_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          course_fee?: number
+          course_id: string
+          created_at?: string
+          id?: string
+          payment_method?: string
+          phone_number?: string | null
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          slip_url: string
+          status?: string
+          student_name: string
+          transaction_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          course_fee?: number
+          course_id?: string
+          created_at?: string
+          id?: string
+          payment_method?: string
+          phone_number?: string | null
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          slip_url?: string
+          status?: string
+          student_name?: string
+          transaction_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_submissions_course_id_fkey"
             columns: ["course_id"]
             isOneToOne: false
             referencedRelation: "courses"
