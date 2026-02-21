@@ -1,9 +1,6 @@
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { useNavigate } from "react-router-dom";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { Section, SectionTitle } from "@/components/layout/PageContainer";
+import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -43,38 +40,28 @@ import {
 import { toast } from "sonner";
 
 const AdminPayments = () => {
-  const navigate = useNavigate();
-  const { user, hasRole, loading: authLoading } = useAuth();
+  const { user } = useAuth();
   const [submissions, setSubmissions] = useState<PaymentSubmissionWithCourse[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [methodFilter, setMethodFilter] = useState("all");
 
-  // Action modals
   const [confirmAction, setConfirmAction] = useState<{ type: "approve" | "reject"; submission: PaymentSubmissionWithCourse } | null>(null);
   const [rejectReason, setRejectReason] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
-
-  // Image preview
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
 
   useEffect(() => {
-    if (!authLoading && (!user || !hasRole("admin"))) {
-      navigate("/");
-      return;
-    }
-    if (user && hasRole("admin")) {
-      fetchSubmissions();
-    }
-  }, [user, authLoading]);
+    fetchSubmissions();
+  }, []);
 
   const fetchSubmissions = async () => {
     try {
       const data = await getAllPaymentSubmissions();
       setSubmissions(data);
-    } catch (err: any) {
+    } catch {
       toast.error("Failed to load submissions");
     } finally {
       setLoading(false);
@@ -152,138 +139,109 @@ const AdminPayments = () => {
     return matchesSearch && matchesStatus && matchesMethod;
   });
 
-  if (authLoading || loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      <main className="py-8">
-        <Section>
-          <SectionTitle subtitle="Review and manage student payment verifications">
-            <Shield className="w-6 h-6 inline mr-2" />
-            Payment Verification Dashboard
-          </SectionTitle>
+    <AdminLayout>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-fredoka font-bold text-foreground">
+            <Shield className="w-7 h-7 inline mr-2" />Payment Verification
+          </h1>
+          <p className="text-muted-foreground mt-1">Review and manage student payment verifications</p>
+        </div>
 
-          {/* Filters */}
-          <div className="flex flex-col sm:flex-row gap-3 mb-6">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Search by name or phone..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[150px]">
-                <Filter className="w-4 h-4 mr-2" />
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="approved">Approved</SelectItem>
-                <SelectItem value="rejected">Rejected</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={methodFilter} onValueChange={setMethodFilter}>
-              <SelectTrigger className="w-[150px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Methods</SelectItem>
-                <SelectItem value="kbz_pay">KBZ Pay</SelectItem>
-                <SelectItem value="aya_pay">AYA Pay</SelectItem>
-                <SelectItem value="uab_pay">UAB Pay</SelectItem>
-              </SelectContent>
-            </Select>
+        {/* Filters */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input placeholder="Search by name or phone..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10" />
           </div>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-[150px]"><Filter className="w-4 h-4 mr-2" /><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="approved">Approved</SelectItem>
+              <SelectItem value="rejected">Rejected</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={methodFilter} onValueChange={setMethodFilter}>
+            <SelectTrigger className="w-[150px]"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Methods</SelectItem>
+              <SelectItem value="kbz_pay">KBZ Pay</SelectItem>
+              <SelectItem value="aya_pay">AYA Pay</SelectItem>
+              <SelectItem value="uab_pay">UAB Pay</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-4 mb-6">
-            <Card><CardContent className="p-4 text-center">
-              <div className="text-2xl font-fredoka font-bold text-star">{submissions.filter((s) => s.status === "pending").length}</div>
-              <div className="text-xs text-muted-foreground">Pending</div>
-            </CardContent></Card>
-            <Card><CardContent className="p-4 text-center">
-              <div className="text-2xl font-fredoka font-bold text-success">{submissions.filter((s) => s.status === "approved").length}</div>
-              <div className="text-xs text-muted-foreground">Approved</div>
-            </CardContent></Card>
-            <Card><CardContent className="p-4 text-center">
-              <div className="text-2xl font-fredoka font-bold text-destructive">{submissions.filter((s) => s.status === "rejected").length}</div>
-              <div className="text-xs text-muted-foreground">Rejected</div>
-            </CardContent></Card>
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-4">
+          <Card><CardContent className="p-4 text-center">
+            <div className="text-2xl font-fredoka font-bold text-star">{submissions.filter((s) => s.status === "pending").length}</div>
+            <div className="text-xs text-muted-foreground">Pending</div>
+          </CardContent></Card>
+          <Card><CardContent className="p-4 text-center">
+            <div className="text-2xl font-fredoka font-bold text-success">{submissions.filter((s) => s.status === "approved").length}</div>
+            <div className="text-xs text-muted-foreground">Approved</div>
+          </CardContent></Card>
+          <Card><CardContent className="p-4 text-center">
+            <div className="text-2xl font-fredoka font-bold text-destructive">{submissions.filter((s) => s.status === "rejected").length}</div>
+            <div className="text-xs text-muted-foreground">Rejected</div>
+          </CardContent></Card>
+        </div>
+
+        {/* Submissions */}
+        {loading ? (
+          <div className="flex items-center justify-center h-48">
+            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
           </div>
-
-          {/* Submissions List */}
-          {filtered.length === 0 ? (
-            <Card><CardContent className="p-12 text-center text-muted-foreground">
-              No payment submissions found.
-            </CardContent></Card>
-          ) : (
-            <div className="space-y-3">
-              {filtered.map((s) => (
-                <Card key={s.id} className="overflow-hidden">
-                  <CardContent className="p-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h4 className="font-fredoka font-bold text-foreground truncate">{s.student_name}</h4>
-                          {getStatusBadge(s.status)}
-                        </div>
-                        <p className="text-sm text-muted-foreground truncate">
-                          {s.courses?.title || "Unknown Course"} • {methodLabel(s.payment_method)}
-                        </p>
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-xs text-muted-foreground">
-                          {s.phone_number && <span>📱 {s.phone_number}</span>}
-                          {s.transaction_id && <span>🔖 {s.transaction_id}</span>}
-                          <span>💰 {new Intl.NumberFormat("my-MM").format(s.course_fee)} MMK</span>
-                          <span>📅 {new Date(s.created_at).toLocaleDateString()}</span>
-                        </div>
-                        {s.rejection_reason && (
-                          <p className="text-xs text-destructive mt-1">Reason: {s.rejection_reason}</p>
-                        )}
+        ) : filtered.length === 0 ? (
+          <Card><CardContent className="p-12 text-center text-muted-foreground">No payment submissions found.</CardContent></Card>
+        ) : (
+          <div className="space-y-3">
+            {filtered.map((s) => (
+              <Card key={s.id} className="overflow-hidden">
+                <CardContent className="p-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h4 className="font-fredoka font-bold text-foreground truncate">{s.student_name}</h4>
+                        {getStatusBadge(s.status)}
                       </div>
-                      <div className="flex items-center gap-2 shrink-0">
-                        <Button variant="outline" size="sm" onClick={() => handleViewSlip(s.slip_url)}>
-                          <Eye className="w-4 h-4" /> View Slip
-                        </Button>
-                        {s.status === "pending" && (
-                          <>
-                            <Button
-                              size="sm"
-                              className="bg-success hover:bg-success/90 text-primary-foreground"
-                              onClick={() => setConfirmAction({ type: "approve", submission: s })}
-                            >
-                              <CheckCircle className="w-4 h-4" /> Approve
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="border-destructive text-destructive hover:bg-destructive/10"
-                              onClick={() => setConfirmAction({ type: "reject", submission: s })}
-                            >
-                              <XCircle className="w-4 h-4" /> Reject
-                            </Button>
-                          </>
-                        )}
+                      <p className="text-sm text-muted-foreground truncate">
+                        {s.courses?.title || "Unknown Course"} • {methodLabel(s.payment_method)}
+                      </p>
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-xs text-muted-foreground">
+                        {s.phone_number && <span>📱 {s.phone_number}</span>}
+                        {s.transaction_id && <span>🔖 {s.transaction_id}</span>}
+                        <span>💰 {new Intl.NumberFormat("my-MM").format(s.course_fee)} MMK</span>
+                        <span>📅 {new Date(s.created_at).toLocaleDateString()}</span>
                       </div>
+                      {s.rejection_reason && <p className="text-xs text-destructive mt-1">Reason: {s.rejection_reason}</p>}
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </Section>
-      </main>
-      <Footer />
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Button variant="outline" size="sm" onClick={() => handleViewSlip(s.slip_url)}>
+                        <Eye className="w-4 h-4" /> View Slip
+                      </Button>
+                      {s.status === "pending" && (
+                        <>
+                          <Button size="sm" className="bg-success hover:bg-success/90 text-primary-foreground" onClick={() => setConfirmAction({ type: "approve", submission: s })}>
+                            <CheckCircle className="w-4 h-4" /> Approve
+                          </Button>
+                          <Button variant="outline" size="sm" className="border-destructive text-destructive hover:bg-destructive/10" onClick={() => setConfirmAction({ type: "reject", submission: s })}>
+                            <XCircle className="w-4 h-4" /> Reject
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Confirmation Dialog */}
       <Dialog open={!!confirmAction} onOpenChange={() => setConfirmAction(null)}>
@@ -294,23 +252,15 @@ const AdminPayments = () => {
             </DialogTitle>
             <DialogDescription>
               {confirmAction?.type === "approve"
-                ? `Approve payment from ${confirmAction?.submission.student_name}? This will unlock the course for them.`
+                ? `Approve payment from ${confirmAction?.submission.student_name}? This will unlock the course.`
                 : `Reject payment from ${confirmAction?.submission.student_name}?`}
             </DialogDescription>
           </DialogHeader>
           {confirmAction?.type === "reject" && (
-            <div className="space-y-2">
-              <Textarea
-                placeholder="Rejection reason (optional)"
-                value={rejectReason}
-                onChange={(e) => setRejectReason(e.target.value)}
-              />
-            </div>
+            <Textarea placeholder="Rejection reason (optional)" value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} />
           )}
           <div className="flex gap-3">
-            <Button variant="outline" onClick={() => setConfirmAction(null)} className="flex-1" disabled={actionLoading}>
-              Cancel
-            </Button>
+            <Button variant="outline" onClick={() => setConfirmAction(null)} className="flex-1" disabled={actionLoading}>Cancel</Button>
             <Button
               onClick={confirmAction?.type === "approve" ? handleApprove : handleReject}
               disabled={actionLoading}
@@ -325,9 +275,7 @@ const AdminPayments = () => {
       {/* Image Preview Dialog */}
       <Dialog open={!!previewUrl} onOpenChange={() => setPreviewUrl(null)}>
         <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="font-fredoka">Payment Slip</DialogTitle>
-          </DialogHeader>
+          <DialogHeader><DialogTitle className="font-fredoka">Payment Slip</DialogTitle></DialogHeader>
           {previewLoading ? (
             <div className="flex items-center justify-center h-48">
               <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
@@ -337,7 +285,7 @@ const AdminPayments = () => {
           ) : null}
         </DialogContent>
       </Dialog>
-    </div>
+    </AdminLayout>
   );
 };
 
