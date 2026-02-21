@@ -25,7 +25,7 @@ export function Navbar() {
     { path: "/dashboard", label: "My Learning", icon: Sparkles },
     { path: "/achievements", label: "Achievements", icon: Trophy },
     { path: "/about", label: "About", icon: Info },
-    ...(hasRole("admin") ? [{ path: "/admin/payments", label: "Admin", icon: Shield }] : []),
+    ...(hasRole("admin") ? [{ path: "/admin", label: "Admin", icon: Shield }] : []),
   ];
 
   const handleSignOut = async () => {

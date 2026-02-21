@@ -17,7 +17,10 @@ import Signup from "./pages/Signup";
 import ParentDashboard from "./pages/ParentDashboard";
 import TeacherDashboard from "./pages/TeacherDashboard";
 import AboutUs from "./pages/AboutUs";
+import AdminOverview from "./pages/AdminOverview";
 import AdminPayments from "./pages/AdminPayments";
+import AdminCourses from "./pages/AdminCourses";
+import AdminStudents from "./pages/AdminStudents";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -43,7 +46,10 @@ const App = () => (
             <Route path="/parent" element={<ParentDashboard />} />
             <Route path="/teacher" element={<TeacherDashboard />} />
             <Route path="/about" element={<AboutUs />} />
+            <Route path="/admin" element={<AdminOverview />} />
             <Route path="/admin/payments" element={<AdminPayments />} />
+            <Route path="/admin/courses" element={<AdminCourses />} />
+            <Route path="/admin/students" element={<AdminStudents />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
