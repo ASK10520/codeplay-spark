@@ -21,6 +21,10 @@ import AdminOverview from "./pages/AdminOverview";
 import AdminPayments from "./pages/AdminPayments";
 import AdminCourses from "./pages/AdminCourses";
 import AdminStudents from "./pages/AdminStudents";
+import AdminEnrollments from "./pages/AdminEnrollments";
+import AdminInstructors from "./pages/AdminInstructors";
+import AdminAnalytics from "./pages/AdminAnalytics";
+import AdminPlaceholder from "./pages/AdminPlaceholder";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -46,10 +50,23 @@ const App = () => (
             <Route path="/parent" element={<ParentDashboard />} />
             <Route path="/teacher" element={<TeacherDashboard />} />
             <Route path="/about" element={<AboutUs />} />
+            {/* Admin Routes */}
             <Route path="/admin" element={<AdminOverview />} />
-            <Route path="/admin/payments" element={<AdminPayments />} />
             <Route path="/admin/courses" element={<AdminCourses />} />
             <Route path="/admin/students" element={<AdminStudents />} />
+            <Route path="/admin/enrollments" element={<AdminEnrollments />} />
+            <Route path="/admin/instructors" element={<AdminInstructors />} />
+            <Route path="/admin/payments" element={<AdminPayments />} />
+            <Route path="/admin/analytics" element={<AdminAnalytics />} />
+            <Route path="/admin/curriculum" element={<AdminPlaceholder />} />
+            <Route path="/admin/certificates" element={<AdminPlaceholder />} />
+            <Route path="/admin/announcements" element={<AdminPlaceholder />} />
+            <Route path="/admin/messages" element={<AdminPlaceholder />} />
+            <Route path="/admin/reviews" element={<AdminPlaceholder />} />
+            <Route path="/admin/content" element={<AdminPlaceholder />} />
+            <Route path="/admin/roles" element={<AdminPlaceholder />} />
+            <Route path="/admin/settings" element={<AdminPlaceholder />} />
+            <Route path="/admin/activity-logs" element={<AdminPlaceholder />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

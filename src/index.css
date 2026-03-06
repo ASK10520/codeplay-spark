@@ -68,15 +68,15 @@
     --shadow-hover: 0 12px 40px -8px hsl(16 90% 60% / 0.4);
     --shadow-button: 0 4px 14px -2px hsl(16 90% 60% / 0.4);
 
-    /* Sidebar */
-    --sidebar-background: 200 85% 55%;
-    --sidebar-foreground: 0 0% 100%;
+    /* Sidebar - Dark professional */
+    --sidebar-background: 220 20% 16%;
+    --sidebar-foreground: 220 10% 90%;
     --sidebar-primary: 0 0% 100%;
-    --sidebar-primary-foreground: 200 85% 55%;
-    --sidebar-accent: 200 90% 65%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 200 80% 50%;
-    --sidebar-ring: 0 0% 100%;
+    --sidebar-primary-foreground: 220 20% 16%;
+    --sidebar-accent: 220 15% 24%;
+    --sidebar-accent-foreground: 220 10% 95%;
+    --sidebar-border: 220 15% 22%;
+    --sidebar-ring: 16 90% 60%;
   }
 
   .dark {

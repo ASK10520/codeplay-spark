@@ -1,10 +1,23 @@
 import { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -12,151 +25,128 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  CheckCircle,
-  XCircle,
-  Clock,
-  Search,
-  Shield,
-  Eye,
-  Filter,
-} from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import {
-  getAllPaymentSubmissions,
-  approvePayment,
-  rejectPayment,
-  getSignedSlipUrl,
-  type PaymentSubmissionWithCourse,
-} from "@/services/paymentService";
+import { Search, CreditCard, CheckCircle, XCircle, Eye, Clock } from "lucide-react";
 import { toast } from "sonner";
+
+interface PaymentRow {
+  id: string;
+  user_id: string;
+  course_id: string;
+  student_name: string;
+  phone_number: string | null;
+  payment_method: string;
+  transaction_id: string | null;
+  course_fee: number;
+  slip_url: string;
+  status: string;
+  rejection_reason: string | null;
+  created_at: string;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+}
 
 const AdminPayments = () => {
   const { user } = useAuth();
-  const [submissions, setSubmissions] = useState<PaymentSubmissionWithCourse[]>([]);
+  const [payments, setPayments] = useState<PaymentRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [methodFilter, setMethodFilter] = useState("all");
+  const [selectedPayment, setSelectedPayment] = useState<PaymentRow | null>(null);
+  const [rejectionReason, setRejectionReason] = useState("");
+  const [updating, setUpdating] = useState(false);
 
-  const [confirmAction, setConfirmAction] = useState<{ type: "approve" | "reject"; submission: PaymentSubmissionWithCourse } | null>(null);
-  const [rejectReason, setRejectReason] = useState("");
-  const [actionLoading, setActionLoading] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [previewLoading, setPreviewLoading] = useState(false);
-
-  useEffect(() => {
-    fetchSubmissions();
-  }, []);
-
-  const fetchSubmissions = async () => {
-    try {
-      const data = await getAllPaymentSubmissions();
-      setSubmissions(data);
-    } catch {
-      toast.error("Failed to load submissions");
-    } finally {
-      setLoading(false);
-    }
+  const fetchPayments = () => {
+    setLoading(true);
+    supabase
+      .from("payment_submissions")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .then(({ data }) => {
+        setPayments((data as PaymentRow[]) || []);
+        setLoading(false);
+      });
   };
 
-  const handleApprove = async () => {
-    if (!confirmAction || !user) return;
-    setActionLoading(true);
-    try {
-      await approvePayment(confirmAction.submission.id, user.id);
-      toast.success("Payment approved! Course unlocked for student.");
-      setConfirmAction(null);
-      fetchSubmissions();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to approve");
-    } finally {
-      setActionLoading(false);
-    }
-  };
+  useEffect(fetchPayments, []);
 
-  const handleReject = async () => {
-    if (!confirmAction || !user) return;
-    setActionLoading(true);
-    try {
-      await rejectPayment(confirmAction.submission.id, user.id, rejectReason);
-      toast.success("Payment rejected.");
-      setConfirmAction(null);
-      setRejectReason("");
-      fetchSubmissions();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to reject");
-    } finally {
-      setActionLoading(false);
-    }
-  };
-
-  const handleViewSlip = async (slipUrl: string) => {
-    setPreviewLoading(true);
-    try {
-      const url = await getSignedSlipUrl(slipUrl);
-      setPreviewUrl(url);
-    } catch {
-      toast.error("Failed to load payment slip image");
-    } finally {
-      setPreviewLoading(false);
-    }
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "pending":
-        return <Badge className="bg-star/20 text-star border-star/30"><Clock className="w-3 h-3 mr-1" />Pending</Badge>;
-      case "approved":
-        return <Badge className="bg-success/20 text-success border-success/30"><CheckCircle className="w-3 h-3 mr-1" />Approved</Badge>;
-      case "rejected":
-        return <Badge className="bg-destructive/20 text-destructive border-destructive/30"><XCircle className="w-3 h-3 mr-1" />Rejected</Badge>;
-      default:
-        return <Badge variant="outline">{status}</Badge>;
-    }
-  };
-
-  const methodLabel = (m: string) => {
-    const map: Record<string, string> = { kbz_pay: "KBZ Pay", aya_pay: "AYA Pay", uab_pay: "UAB Pay" };
-    return map[m] || m;
-  };
-
-  const filtered = submissions.filter((s) => {
-    const matchesSearch =
-      !searchQuery ||
-      s.student_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (s.phone_number && s.phone_number.includes(searchQuery));
-    const matchesStatus = statusFilter === "all" || s.status === statusFilter;
-    const matchesMethod = methodFilter === "all" || s.payment_method === methodFilter;
-    return matchesSearch && matchesStatus && matchesMethod;
+  const filtered = payments.filter((p) => {
+    const matchSearch =
+      !search ||
+      p.student_name.toLowerCase().includes(search.toLowerCase()) ||
+      p.payment_method.toLowerCase().includes(search.toLowerCase());
+    const matchStatus = statusFilter === "all" || p.status === statusFilter;
+    return matchSearch && matchStatus;
   });
+
+  const handleAction = async (id: string, action: "approved" | "rejected") => {
+    setUpdating(true);
+    const updates: Record<string, unknown> = {
+      status: action,
+      reviewed_by: user?.id,
+      reviewed_at: new Date().toISOString(),
+    };
+    if (action === "rejected") updates.rejection_reason = rejectionReason;
+
+    const { error } = await supabase.from("payment_submissions").update(updates).eq("id", id);
+    if (error) toast.error("Failed: " + error.message);
+    else {
+      toast.success(`Payment ${action}!`);
+      await supabase.from("payment_audit_log").insert({
+        payment_submission_id: id,
+        performed_by: user?.id || "",
+        action,
+        details: action === "rejected" ? rejectionReason : null,
+      });
+      setSelectedPayment(null);
+      setRejectionReason("");
+      fetchPayments();
+    }
+    setUpdating(false);
+  };
+
+  const statusColor = (s: string) => {
+    if (s === "approved") return "bg-success/10 text-success border-success/20";
+    if (s === "pending") return "bg-star/10 text-star border-star/20";
+    return "bg-destructive/10 text-destructive border-destructive/20";
+  };
+
+  const statusIcon = (s: string) => {
+    if (s === "approved") return <CheckCircle className="w-3 h-3" />;
+    if (s === "pending") return <Clock className="w-3 h-3" />;
+    return <XCircle className="w-3 h-3" />;
+  };
+
+  const pendingCount = payments.filter((p) => p.status === "pending").length;
 
   return (
     <AdminLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-fredoka font-bold text-foreground">
-            <Shield className="w-7 h-7 inline mr-2" />Payment Verification
+          <h1 className="text-2xl md:text-3xl font-fredoka font-bold text-foreground flex items-center gap-2">
+            <CreditCard className="w-7 h-7" /> Payments
           </h1>
-          <p className="text-muted-foreground mt-1">Review and manage student payment verifications</p>
+          <p className="text-sm text-muted-foreground mt-1 font-nunito">
+            {payments.length} total • {pendingCount} pending
+          </p>
         </div>
 
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1">
+        <div className="flex flex-wrap gap-3">
+          <div className="relative flex-1 min-w-[200px] max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input placeholder="Search by name or phone..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10" />
+            <Input
+              placeholder="Search payments..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9 rounded-xl bg-card border-border/50 font-nunito"
+            />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[150px]"><Filter className="w-4 h-4 mr-2" /><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-36 rounded-xl">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="pending">Pending</SelectItem>
@@ -164,125 +154,137 @@ const AdminPayments = () => {
               <SelectItem value="rejected">Rejected</SelectItem>
             </SelectContent>
           </Select>
-          <Select value={methodFilter} onValueChange={setMethodFilter}>
-            <SelectTrigger className="w-[150px]"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Methods</SelectItem>
-              <SelectItem value="kbz_pay">KBZ Pay</SelectItem>
-              <SelectItem value="aya_pay">AYA Pay</SelectItem>
-              <SelectItem value="uab_pay">UAB Pay</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-4">
-          <Card><CardContent className="p-4 text-center">
-            <div className="text-2xl font-fredoka font-bold text-star">{submissions.filter((s) => s.status === "pending").length}</div>
-            <div className="text-xs text-muted-foreground">Pending</div>
-          </CardContent></Card>
-          <Card><CardContent className="p-4 text-center">
-            <div className="text-2xl font-fredoka font-bold text-success">{submissions.filter((s) => s.status === "approved").length}</div>
-            <div className="text-xs text-muted-foreground">Approved</div>
-          </CardContent></Card>
-          <Card><CardContent className="p-4 text-center">
-            <div className="text-2xl font-fredoka font-bold text-destructive">{submissions.filter((s) => s.status === "rejected").length}</div>
-            <div className="text-xs text-muted-foreground">Rejected</div>
-          </CardContent></Card>
-        </div>
-
-        {/* Submissions */}
         {loading ? (
           <div className="flex items-center justify-center h-48">
             <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
           </div>
         ) : filtered.length === 0 ? (
-          <Card><CardContent className="p-12 text-center text-muted-foreground">No payment submissions found.</CardContent></Card>
+          <Card className="border-0 shadow-card">
+            <CardContent className="p-12 text-center text-muted-foreground font-nunito">
+              No payments found.
+            </CardContent>
+          </Card>
         ) : (
-          <div className="space-y-3">
-            {filtered.map((s) => (
-              <Card key={s.id} className="overflow-hidden">
-                <CardContent className="p-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-fredoka font-bold text-foreground truncate">{s.student_name}</h4>
-                        {getStatusBadge(s.status)}
-                      </div>
-                      <p className="text-sm text-muted-foreground truncate">
-                        {s.courses?.title || "Unknown Course"} • {methodLabel(s.payment_method)}
-                      </p>
-                      <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-xs text-muted-foreground">
-                        {s.phone_number && <span>📱 {s.phone_number}</span>}
-                        {s.transaction_id && <span>🔖 {s.transaction_id}</span>}
-                        <span>💰 {new Intl.NumberFormat("my-MM").format(s.course_fee)} MMK</span>
-                        <span>📅 {new Date(s.created_at).toLocaleDateString()}</span>
-                      </div>
-                      {s.rejection_reason && <p className="text-xs text-destructive mt-1">Reason: {s.rejection_reason}</p>}
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <Button variant="outline" size="sm" onClick={() => handleViewSlip(s.slip_url)}>
-                        <Eye className="w-4 h-4" /> View Slip
-                      </Button>
-                      {s.status === "pending" && (
-                        <>
-                          <Button size="sm" className="bg-success hover:bg-success/90 text-primary-foreground" onClick={() => setConfirmAction({ type: "approve", submission: s })}>
-                            <CheckCircle className="w-4 h-4" /> Approve
-                          </Button>
-                          <Button variant="outline" size="sm" className="border-destructive text-destructive hover:bg-destructive/10" onClick={() => setConfirmAction({ type: "reject", submission: s })}>
-                            <XCircle className="w-4 h-4" /> Reject
-                          </Button>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <Card className="border-0 shadow-card overflow-hidden">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/50">
+                    <TableHead className="font-nunito text-xs font-semibold">Student</TableHead>
+                    <TableHead className="font-nunito text-xs font-semibold">Amount</TableHead>
+                    <TableHead className="font-nunito text-xs font-semibold">Method</TableHead>
+                    <TableHead className="font-nunito text-xs font-semibold">Status</TableHead>
+                    <TableHead className="font-nunito text-xs font-semibold">Date</TableHead>
+                    <TableHead className="font-nunito text-xs font-semibold text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filtered.map((p) => (
+                    <TableRow key={p.id} className="hover:bg-muted/30 transition-colors">
+                      <TableCell>
+                        <p className="text-sm font-nunito font-semibold text-foreground">{p.student_name}</p>
+                        {p.phone_number && <p className="text-[11px] text-muted-foreground">{p.phone_number}</p>}
+                      </TableCell>
+                      <TableCell className="text-sm font-semibold text-foreground">
+                        {new Intl.NumberFormat("my-MM").format(p.course_fee)} MMK
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="text-[10px] rounded-lg capitalize">
+                          {p.payment_method.replace("_", " ")}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={`text-[10px] border gap-1 ${statusColor(p.status)}`}>
+                          {statusIcon(p.status)} {p.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        {new Date(p.created_at).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => setSelectedPayment(p)}>
+                          <Eye className="w-3 h-3 mr-1" /> View
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </Card>
         )}
       </div>
 
-      {/* Confirmation Dialog */}
-      <Dialog open={!!confirmAction} onOpenChange={() => setConfirmAction(null)}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="font-fredoka">
-              {confirmAction?.type === "approve" ? "✅ Approve Payment" : "❌ Reject Payment"}
-            </DialogTitle>
-            <DialogDescription>
-              {confirmAction?.type === "approve"
-                ? `Approve payment from ${confirmAction?.submission.student_name}? This will unlock the course.`
-                : `Reject payment from ${confirmAction?.submission.student_name}?`}
-            </DialogDescription>
-          </DialogHeader>
-          {confirmAction?.type === "reject" && (
-            <Textarea placeholder="Rejection reason (optional)" value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} />
-          )}
-          <div className="flex gap-3">
-            <Button variant="outline" onClick={() => setConfirmAction(null)} className="flex-1" disabled={actionLoading}>Cancel</Button>
-            <Button
-              onClick={confirmAction?.type === "approve" ? handleApprove : handleReject}
-              disabled={actionLoading}
-              className={cn("flex-1", confirmAction?.type === "approve" ? "bg-success hover:bg-success/90" : "bg-destructive hover:bg-destructive/90", "text-primary-foreground")}
-            >
-              {actionLoading ? "Processing..." : confirmAction?.type === "approve" ? "Approve" : "Reject"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Image Preview Dialog */}
-      <Dialog open={!!previewUrl} onOpenChange={() => setPreviewUrl(null)}>
+      <Dialog open={!!selectedPayment} onOpenChange={(o) => !o && setSelectedPayment(null)}>
         <DialogContent className="max-w-lg">
-          <DialogHeader><DialogTitle className="font-fredoka">Payment Slip</DialogTitle></DialogHeader>
-          {previewLoading ? (
-            <div className="flex items-center justify-center h-48">
-              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+          <DialogHeader>
+            <DialogTitle className="font-fredoka">Payment Details</DialogTitle>
+          </DialogHeader>
+          {selectedPayment && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <p className="text-muted-foreground text-xs">Student</p>
+                  <p className="font-semibold">{selectedPayment.student_name}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Amount</p>
+                  <p className="font-semibold">{new Intl.NumberFormat("my-MM").format(selectedPayment.course_fee)} MMK</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Method</p>
+                  <p className="font-semibold capitalize">{selectedPayment.payment_method.replace("_", " ")}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Status</p>
+                  <Badge className={`text-xs border ${statusColor(selectedPayment.status)}`}>
+                    {selectedPayment.status}
+                  </Badge>
+                </div>
+              </div>
+
+              <div className="rounded-xl overflow-hidden border border-border bg-muted">
+                <img src={selectedPayment.slip_url} alt="Payment slip" className="w-full max-h-64 object-contain" />
+              </div>
+
+              {selectedPayment.status === "pending" && (
+                <div className="space-y-3 pt-2 border-t">
+                  <Textarea
+                    placeholder="Rejection reason (optional)..."
+                    value={rejectionReason}
+                    onChange={(e) => setRejectionReason(e.target.value)}
+                    className="text-sm"
+                  />
+                  <div className="flex gap-2">
+                    <Button
+                      className="flex-1 bg-success hover:bg-success/90 text-primary-foreground"
+                      onClick={() => handleAction(selectedPayment.id, "approved")}
+                      disabled={updating}
+                    >
+                      <CheckCircle className="w-4 h-4 mr-1" /> Approve
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      className="flex-1"
+                      onClick={() => handleAction(selectedPayment.id, "rejected")}
+                      disabled={updating}
+                    >
+                      <XCircle className="w-4 h-4 mr-1" /> Reject
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {selectedPayment.rejection_reason && (
+                <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20">
+                  <p className="text-xs text-muted-foreground">Rejection Reason</p>
+                  <p className="text-sm text-destructive">{selectedPayment.rejection_reason}</p>
+                </div>
+              )}
             </div>
-          ) : previewUrl ? (
-            <img src={previewUrl} alt="Payment slip" className="w-full rounded-lg" />
-          ) : null}
+          )}
         </DialogContent>
       </Dialog>
     </AdminLayout>
