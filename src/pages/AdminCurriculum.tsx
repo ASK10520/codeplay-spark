@@ -202,16 +202,16 @@ const SortableModule = ({
           <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-border/50">
             <span className="text-sm font-nunito text-muted-foreground w-full mb-1">Add to module:</span>
             <Button variant="outline" size="sm" className="h-8 text-xs rounded-lg gap-1" onClick={() => addDummyLesson("video")}>
-              <Video className="w-3 h-3 text-blue-500" /> Video
+              <Video className="w-3 h-3 text-secondary" /> Video
             </Button>
             <Button variant="outline" size="sm" className="h-8 text-xs rounded-lg gap-1" onClick={() => addDummyLesson("pdf")}>
-              <FileText className="w-3 h-3 text-red-500" /> PDF
+              <FileText className="w-3 h-3 text-destructive" /> PDF
             </Button>
             <Button variant="outline" size="sm" className="h-8 text-xs rounded-lg gap-1" onClick={() => addDummyLesson("quiz")}>
-              <HelpCircle className="w-3 h-3 text-purple-500" /> Quiz
+              <HelpCircle className="w-3 h-3 text-primary" /> Quiz
             </Button>
             <Button variant="outline" size="sm" className="h-8 text-xs rounded-lg gap-1" onClick={() => addDummyLesson("article")}>
-              <BookOpen className="w-3 h-3 text-green-500" /> Article
+              <BookOpen className="w-3 h-3 text-accent" /> Article
             </Button>
           </div>
         </CollapsibleContent>
