@@ -45,6 +45,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { sendAnnouncementPublishedNotification } from "@/services/notificationService";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
