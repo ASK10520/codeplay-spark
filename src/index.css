@@ -69,13 +69,13 @@
     --shadow-button: 0 4px 14px -2px hsl(16 90% 60% / 0.4);
 
     /* Sidebar - Dark professional */
-    --sidebar-background: 220 20% 16%;
-    --sidebar-foreground: 220 10% 90%;
-    --sidebar-primary: 0 0% 100%;
-    --sidebar-primary-foreground: 220 20% 16%;
-    --sidebar-accent: 220 15% 24%;
-    --sidebar-accent-foreground: 220 10% 95%;
-    --sidebar-border: 220 15% 22%;
+    --sidebar-background: 220 20% 14%;
+    --sidebar-foreground: 220 8% 92%;
+    --sidebar-primary: 220 13% 91%;
+    --sidebar-primary-foreground: 220 9% 9%;
+    --sidebar-accent: 220 14% 20%;
+    --sidebar-accent-foreground: 220 9% 96%;
+    --sidebar-border: 220 13% 18%;
     --sidebar-ring: 16 90% 60%;
   }
 
@@ -185,6 +185,15 @@
   .text-gradient {
     @apply bg-clip-text text-transparent;
     background: var(--gradient-rainbow);
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
   /* Fun animations */
