@@ -187,6 +187,15 @@
     background: var(--gradient-rainbow);
   }
 
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
   /* Fun animations */
   .wiggle {
     animation: wiggle 0.5s ease-in-out;

@@ -125,7 +125,11 @@ export function AdminSidebar() {
   const collapsed = state === "collapsed";
 
   return (
-    <Sidebar collapsible="icon" className="border-r-0" style={{ width: collapsed ? '4rem' : '260px' }}>
+    <Sidebar
+      collapsible="icon"
+      className="border-r-0 bg-[linear-gradient(180deg,hsl(var(--sidebar-background)),hsl(var(--sidebar-accent)/0.72))]"
+      style={{ width: collapsed ? '4rem' : '260px' }}
+    >
       <SidebarHeader className="p-5 border-b border-sidebar-border/20">
         <Link to="/admin" className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl gradient-primary flex items-center justify-center shadow-lg shrink-0 ring-2 ring-sidebar-accent/20">
