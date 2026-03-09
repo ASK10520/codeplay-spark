@@ -25,6 +25,7 @@ import AdminEnrollments from "./pages/AdminEnrollments";
 import AdminInstructors from "./pages/AdminInstructors";
 import AdminAnalytics from "./pages/AdminAnalytics";
 import AdminCurriculum from "./pages/AdminCurriculum";
+import AdminAnnouncements from "./pages/AdminAnnouncements";
 import AdminPlaceholder from "./pages/AdminPlaceholder";
 import NotFound from "./pages/NotFound";
 
@@ -61,7 +62,7 @@ const App = () => (
             <Route path="/admin/analytics" element={<AdminAnalytics />} />
             <Route path="/admin/curriculum" element={<AdminCurriculum />} />
             <Route path="/admin/certificates" element={<AdminPlaceholder />} />
-            <Route path="/admin/announcements" element={<AdminPlaceholder />} />
+            <Route path="/admin/announcements" element={<AdminAnnouncements />} />
             <Route path="/admin/messages" element={<AdminPlaceholder />} />
             <Route path="/admin/reviews" element={<AdminPlaceholder />} />
             <Route path="/admin/content" element={<AdminPlaceholder />} />
