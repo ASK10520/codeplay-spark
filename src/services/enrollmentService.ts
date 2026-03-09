@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { sendEnrollmentConfirmedNotification } from "@/services/notificationService";
 
 export interface Enrollment {
   id: string;
@@ -33,6 +34,15 @@ export async function enrollUser(enrollment: Omit<Enrollment, "id" | "enrolled_a
     .single();
 
   if (error) throw error;
+
+  void sendEnrollmentConfirmedNotification({
+    userId: data.user_id,
+    courseId: data.course_id,
+    studentName: data.child_name,
+  }).catch((notificationError) => {
+    console.error("Enrollment email notification failed:", notificationError);
+  });
+
   return data as Enrollment;
 }
 

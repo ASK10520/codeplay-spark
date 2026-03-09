@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { sendEnrollmentConfirmedNotification } from "@/services/notificationService";
 
 export interface PaymentSubmission {
   id: string;
@@ -132,6 +133,14 @@ export async function approvePayment(submissionId: string, adminId: string) {
     });
 
   if (enrollError) throw enrollError;
+
+  void sendEnrollmentConfirmedNotification({
+    userId: submission.user_id,
+    courseId: submission.course_id,
+    studentName: submission.student_name,
+  }).catch((notificationError) => {
+    console.error("Enrollment confirmation email failed:", notificationError);
+  });
 
   // Audit log
   const { error: auditError } = await supabase
