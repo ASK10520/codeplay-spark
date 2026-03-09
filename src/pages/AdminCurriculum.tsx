@@ -54,10 +54,10 @@ interface Module {
 
 const getLessonIcon = (type: LessonType) => {
   switch (type) {
-    case "video": return <Video className="w-4 h-4 text-blue-500" />;
-    case "pdf": return <FileText className="w-4 h-4 text-red-500" />;
-    case "quiz": return <HelpCircle className="w-4 h-4 text-purple-500" />;
-    case "article": return <BookOpen className="w-4 h-4 text-green-500" />;
+    case "video": return <Video className="w-4 h-4 text-secondary" />;
+    case "pdf": return <FileText className="w-4 h-4 text-destructive" />;
+    case "quiz": return <HelpCircle className="w-4 h-4 text-primary" />;
+    case "article": return <BookOpen className="w-4 h-4 text-accent" />;
   }
 };
 
