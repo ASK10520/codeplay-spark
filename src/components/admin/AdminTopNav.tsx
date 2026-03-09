@@ -1,7 +1,6 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Input } from "@/components/ui/input";
-import { Search, Bell, MessageSquare, Settings, ChevronDown, User, LogOut } from "lucide-react";
+import { Bell, MessageSquare, Settings, ChevronDown, User, LogOut } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
@@ -11,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { AdminSearchBar } from "./AdminSearchBar";
 
 export function AdminTopNav() {
   const { user, signOut } = useAuth();
@@ -20,13 +20,7 @@ export function AdminTopNav() {
     <header className="h-16 border-b border-border/40 bg-background sticky top-0 z-30 flex items-center px-6 md:px-8 gap-5">
       <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors -ml-1" />
 
-      <div className="relative flex-1 max-w-xl hidden sm:block">
-        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
-        <Input
-          placeholder="Search courses, students, payments..."
-          className="pl-10 h-10 rounded-full bg-muted/30 border-none text-sm font-nunito focus-visible:ring-1 focus-visible:ring-primary/20 placeholder:text-muted-foreground/40 shadow-none"
-        />
-      </div>
+      <AdminSearchBar />
 
       <div className="ml-auto flex items-center gap-1.5">
         <button className="relative h-9 w-9 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all duration-150">
