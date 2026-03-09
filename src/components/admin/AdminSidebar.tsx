@@ -125,50 +125,50 @@ export function AdminSidebar() {
   const collapsed = state === "collapsed";
 
   return (
-    <Sidebar collapsible="icon" className="border-r-0">
-      <SidebarHeader className="p-4 border-b border-sidebar-border/30">
-        <Link to="/admin" className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl gradient-primary flex items-center justify-center shadow-sm shrink-0">
+    <Sidebar collapsible="icon" className="border-r-0" style={{ width: collapsed ? '4rem' : '260px' }}>
+      <SidebarHeader className="p-5 border-b border-sidebar-border/20">
+        <Link to="/admin" className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl gradient-primary flex items-center justify-center shadow-lg shrink-0 ring-2 ring-sidebar-accent/20">
             <Sparkles className="w-5 h-5 text-primary-foreground" />
           </div>
           {!collapsed && (
             <div className="min-w-0">
-              <h1 className="font-fredoka font-bold text-base text-sidebar-foreground leading-tight truncate">
+              <h1 className="font-fredoka font-bold text-lg text-sidebar-foreground leading-tight truncate">
                 CodePlay Spark
               </h1>
-              <p className="text-[10px] text-sidebar-foreground/50 font-nunito">Admin Panel</p>
+              <p className="text-[10px] text-sidebar-foreground/40 font-nunito tracking-wide">Admin Panel</p>
             </div>
           )}
         </Link>
       </SidebarHeader>
 
-      <SidebarContent className="py-2 overflow-y-auto">
+      <SidebarContent className="py-4 px-0 overflow-y-auto scrollbar-hide">
         <MenuSection items={mainMenu} label="Main" collapsed={collapsed} />
         <MenuSection items={secondaryMenu} label="Engagement" collapsed={collapsed} />
         <MenuSection items={systemMenu} label="System" collapsed={collapsed} />
       </SidebarContent>
 
-      <SidebarFooter className="p-3 space-y-2 border-t border-sidebar-border/30">
+      <SidebarFooter className="p-4 space-y-3 border-t border-sidebar-border/20">
         {!collapsed && (
-          <div className="rounded-xl bg-sidebar-accent/30 p-3 text-center">
-            <p className="text-xs text-sidebar-foreground/80 font-nunito mb-2">
+          <div className="rounded-2xl bg-gradient-to-br from-sidebar-accent/40 to-sidebar-accent/20 p-4 text-center border border-sidebar-border/10">
+            <p className="text-xs text-sidebar-foreground/70 font-nunito mb-3 leading-relaxed">
               Upgrade to Pro for advanced analytics
             </p>
             <Button
               size="sm"
-              className="w-full gradient-primary text-primary-foreground font-semibold text-xs h-8 rounded-lg"
+              className="w-full gradient-primary text-primary-foreground font-semibold text-xs h-9 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
             >
               Upgrade Plan
             </Button>
           </div>
         )}
 
-        <div className="flex gap-1">
+        <div className="flex gap-2">
           <Link to="/" className="flex-1">
             <Button
               variant="ghost"
               size="sm"
-              className="w-full justify-start text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/40 text-xs"
+              className="w-full justify-start text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent/30 text-xs rounded-xl transition-all duration-300"
             >
               ← {!collapsed && "Back to Site"}
             </Button>
@@ -176,7 +176,7 @@ export function AdminSidebar() {
           <Button
             variant="ghost"
             size="icon"
-            className="text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/40 h-8 w-8 shrink-0"
+            className="text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent/30 h-9 w-9 shrink-0 rounded-xl transition-all duration-300"
             onClick={signOut}
             title="Sign Out"
           >
