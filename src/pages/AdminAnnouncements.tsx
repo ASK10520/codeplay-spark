@@ -45,6 +45,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { sendAnnouncementPublishedNotification } from "@/services/notificationService";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -179,11 +180,20 @@ const AdminAnnouncements = () => {
     };
 
     if (formMode === "create") {
-      const { error } = await supabase.from("announcements").insert(payload);
+      const { data, error } = await supabase.from("announcements").insert(payload).select().single();
       if (error) {
         toast.error("Failed to create: " + error.message);
       } else {
         toast.success("Announcement created!");
+        if (formData.is_published && data) {
+          void sendAnnouncementPublishedNotification({
+            announcementId: data.id,
+            title: formData.title,
+            content: formData.content,
+          }).catch((notificationError) => {
+            console.error("Announcement notification failed:", notificationError);
+          });
+        }
         setFormOpen(false);
         fetchAnnouncements();
       }
@@ -234,6 +244,15 @@ const AdminAnnouncements = () => {
       toast.error("Failed to update");
     } else {
       toast.success(newPublished ? "Published!" : "Unpublished");
+      if (newPublished) {
+        void sendAnnouncementPublishedNotification({
+          announcementId: a.id,
+          title: a.title,
+          content: a.content,
+        }).catch((notificationError) => {
+          console.error("Announcement notification failed:", notificationError);
+        });
+      }
       fetchAnnouncements();
     }
   };
