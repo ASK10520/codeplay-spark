@@ -74,14 +74,14 @@ function MenuSection({
   const location = useLocation();
 
   return (
-    <SidebarGroup>
+    <SidebarGroup className="mb-6">
       {!collapsed && (
-        <SidebarGroupLabel className="text-[10px] uppercase tracking-wider text-sidebar-foreground/50 px-3 mb-1">
+        <SidebarGroupLabel className="text-[10px] uppercase tracking-widest text-sidebar-foreground/40 px-4 mb-3 font-semibold">
           {label}
         </SidebarGroupLabel>
       )}
       <SidebarGroupContent>
-        <SidebarMenu>
+        <SidebarMenu className="space-y-1">
           {items.map((item) => {
             const isActive = location.pathname === item.path;
             return (
@@ -91,17 +91,22 @@ function MenuSection({
                   isActive={isActive}
                   tooltip={item.label}
                   className={cn(
-                    "transition-all duration-200 rounded-lg mx-1",
+                    "transition-all duration-300 rounded-xl mx-2 h-11 group",
                     isActive
-                      ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold shadow-sm"
-                      : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+                      ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold shadow-lg shadow-sidebar-accent/10"
+                      : "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/30 hover:shadow-md"
                   )}
                 >
-                  <Link to={item.path}>
-                    <item.icon className="h-4 w-4 shrink-0" />
-                    {!collapsed && <span className="font-nunito text-sm">{item.label}</span>}
+                  <Link to={item.path} className="flex items-center w-full">
+                    <item.icon className={cn(
+                      "h-4 w-4 shrink-0 transition-transform duration-300",
+                      isActive ? "scale-110" : "group-hover:scale-105"
+                    )} />
+                    {!collapsed && (
+                      <span className="font-nunito text-sm ml-3">{item.label}</span>
+                    )}
                     {isActive && !collapsed && (
-                      <ChevronRight className="ml-auto h-3 w-3 opacity-60" />
+                      <ChevronRight className="ml-auto h-3.5 w-3.5 opacity-70" />
                     )}
                   </Link>
                 </SidebarMenuButton>
