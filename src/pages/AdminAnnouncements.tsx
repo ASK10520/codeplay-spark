@@ -180,11 +180,20 @@ const AdminAnnouncements = () => {
     };
 
     if (formMode === "create") {
-      const { error } = await supabase.from("announcements").insert(payload);
+      const { data, error } = await supabase.from("announcements").insert(payload).select().single();
       if (error) {
         toast.error("Failed to create: " + error.message);
       } else {
         toast.success("Announcement created!");
+        if (formData.is_published && data) {
+          void sendAnnouncementPublishedNotification({
+            announcementId: data.id,
+            title: formData.title,
+            content: formData.content,
+          }).catch((notificationError) => {
+            console.error("Announcement notification failed:", notificationError);
+          });
+        }
         setFormOpen(false);
         fetchAnnouncements();
       }
