@@ -21,13 +21,11 @@ type NotificationRequest =
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-const SUPABASE_PUBLISHABLE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY");
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const RESEND_FROM_EMAIL = Deno.env.get("RESEND_FROM_EMAIL");
 
 if (!SUPABASE_URL) throw new Error("SUPABASE_URL is not configured");
 if (!SUPABASE_SERVICE_ROLE_KEY) throw new Error("SUPABASE_SERVICE_ROLE_KEY is not configured");
-if (!SUPABASE_PUBLISHABLE_KEY) throw new Error("SUPABASE_PUBLISHABLE_KEY is not configured");
 if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY is not configured");
 if (!RESEND_FROM_EMAIL) throw new Error("RESEND_FROM_EMAIL is not configured");
 
