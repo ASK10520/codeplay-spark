@@ -100,14 +100,11 @@ Deno.serve(async (req) => {
       });
     }
 
-    const authClient = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-      global: { headers: { Authorization: authHeader } },
-    });
-
+    const token = authHeader.replace("Bearer ", "");
     const {
       data: { user },
       error: userError,
-    } = await authClient.auth.getUser();
+    } = await serviceClient.auth.getUser(token);
 
     if (userError || !user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
