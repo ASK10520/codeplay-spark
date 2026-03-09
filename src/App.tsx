@@ -24,6 +24,7 @@ import AdminStudents from "./pages/AdminStudents";
 import AdminEnrollments from "./pages/AdminEnrollments";
 import AdminInstructors from "./pages/AdminInstructors";
 import AdminAnalytics from "./pages/AdminAnalytics";
+import AdminCurriculum from "./pages/AdminCurriculum";
 import AdminPlaceholder from "./pages/AdminPlaceholder";
 import NotFound from "./pages/NotFound";
 
