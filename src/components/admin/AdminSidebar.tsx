@@ -128,7 +128,6 @@ export function AdminSidebar() {
     <Sidebar
       collapsible="icon"
       className="border-r-0 bg-[linear-gradient(180deg,hsl(var(--sidebar-background)),hsl(var(--sidebar-accent)/0.72))]"
-      style={{ width: collapsed ? '4rem' : '260px' }}
     >
       <SidebarHeader className="p-5 border-b border-sidebar-border/20">
         <Link to="/admin" className="flex items-center gap-3">
