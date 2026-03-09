@@ -235,6 +235,15 @@ const AdminAnnouncements = () => {
       toast.error("Failed to update");
     } else {
       toast.success(newPublished ? "Published!" : "Unpublished");
+      if (newPublished) {
+        void sendAnnouncementPublishedNotification({
+          announcementId: a.id,
+          title: a.title,
+          content: a.content,
+        }).catch((notificationError) => {
+          console.error("Announcement notification failed:", notificationError);
+        });
+      }
       fetchAnnouncements();
     }
   };
