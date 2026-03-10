@@ -319,25 +319,73 @@ export type Database = {
       profiles: {
         Row: {
           avatar_emoji: string | null
+          bio: string | null
           created_at: string
           display_name: string | null
           id: string
+          skills: string[] | null
           updated_at: string
           user_id: string
         }
         Insert: {
           avatar_emoji?: string | null
+          bio?: string | null
           created_at?: string
           display_name?: string | null
           id?: string
+          skills?: string[] | null
           updated_at?: string
           user_id: string
         }
         Update: {
           avatar_emoji?: string | null
+          bio?: string | null
           created_at?: string
           display_name?: string | null
           id?: string
+          skills?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      student_projects: {
+        Row: {
+          code_snippet: string | null
+          created_at: string
+          demo_link: string | null
+          description: string | null
+          id: string
+          is_published: boolean
+          language: string
+          screenshot_url: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          code_snippet?: string | null
+          created_at?: string
+          demo_link?: string | null
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          language?: string
+          screenshot_url?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          code_snippet?: string | null
+          created_at?: string
+          demo_link?: string | null
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          language?: string
+          screenshot_url?: string | null
+          title?: string
           updated_at?: string
           user_id?: string
         }

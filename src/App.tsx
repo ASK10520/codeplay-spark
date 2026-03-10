@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
+import Portfolio from "./pages/Portfolio";
 import Courses from "./pages/Courses";
 import CurriculumCatalog from "./pages/CurriculumCatalog";
 import CurriculumCourseDetail from "./pages/CurriculumCourseDetail";
@@ -53,6 +54,7 @@ const App = () => (
             <Route path="/parent" element={<ParentDashboard />} />
             <Route path="/teacher" element={<TeacherDashboard />} />
             <Route path="/about" element={<AboutUs />} />
+            <Route path="/portfolio" element={<Portfolio />} />
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminOverview />} />
             <Route path="/admin/courses" element={<AdminCourses />} />
