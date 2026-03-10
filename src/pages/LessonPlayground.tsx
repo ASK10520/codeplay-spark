@@ -219,6 +219,7 @@ const LessonPlayground = () => {
           </div>
         </div>
       </div>
+      <AiTutorChat contextHint="Repeat Magic lesson - learning about loops and repeat blocks" />
     </div>
   );
 };
