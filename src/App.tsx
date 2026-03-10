@@ -27,6 +27,7 @@ import AdminAnalytics from "./pages/AdminAnalytics";
 import AdminCurriculum from "./pages/AdminCurriculum";
 import AdminAnnouncements from "./pages/AdminAnnouncements";
 import AdminPlaceholder from "./pages/AdminPlaceholder";
+import AdminSettings from "./pages/AdminSettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
