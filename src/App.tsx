@@ -27,6 +27,7 @@ import AdminAnalytics from "./pages/AdminAnalytics";
 import AdminCurriculum from "./pages/AdminCurriculum";
 import AdminAnnouncements from "./pages/AdminAnnouncements";
 import AdminPlaceholder from "./pages/AdminPlaceholder";
+import AdminSettings from "./pages/AdminSettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -67,7 +68,7 @@ const App = () => (
             <Route path="/admin/reviews" element={<AdminPlaceholder />} />
             <Route path="/admin/content" element={<AdminPlaceholder />} />
             <Route path="/admin/roles" element={<AdminPlaceholder />} />
-            <Route path="/admin/settings" element={<AdminPlaceholder />} />
+            <Route path="/admin/settings" element={<AdminSettings />} />
             <Route path="/admin/activity-logs" element={<AdminPlaceholder />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

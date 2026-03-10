@@ -1,6 +1,6 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Bell, MessageSquare, Settings, ChevronDown, User, LogOut } from "lucide-react";
+import { MessageSquare, Settings, ChevronDown, User, LogOut } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AdminSearchBar } from "./AdminSearchBar";
+import { AdminNotifications } from "./AdminNotifications";
 
 export function AdminTopNav() {
   const { user, signOut } = useAuth();
@@ -23,12 +24,7 @@ export function AdminTopNav() {
       <AdminSearchBar />
 
       <div className="ml-auto flex items-center gap-1.5">
-        <button className="relative h-9 w-9 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all duration-150">
-          <Bell className="h-[18px] w-[18px]" />
-          <span className="absolute -top-0.5 -right-0.5 h-[18px] min-w-[18px] px-1 rounded-full text-[10px] font-bold flex items-center justify-center bg-destructive text-destructive-foreground ring-2 ring-background">
-            3
-          </span>
-        </button>
+        <AdminNotifications />
 
         <button className="h-9 w-9 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all duration-150">
           <MessageSquare className="h-[18px] w-[18px]" />
