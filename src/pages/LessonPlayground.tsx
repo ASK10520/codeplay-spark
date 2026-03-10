@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AiTutorChat } from "@/components/tutor/AiTutorChat";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
