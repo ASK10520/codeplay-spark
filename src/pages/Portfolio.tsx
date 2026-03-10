@@ -55,22 +55,22 @@ const Portfolio = () => {
   }, [user]);
 
   const fetchProjects = async () => {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("student_projects")
       .select("*")
       .eq("user_id", user!.id)
       .order("created_at", { ascending: false });
-    if (!error && data) setProjects(data);
+    if (!error && data) setProjects(data as Project[]);
     setLoading(false);
   };
 
   const fetchProfile = async () => {
-    const { data } = await supabase
+    const { data } = await (supabase as any)
       .from("profiles")
       .select("display_name, avatar_emoji, bio, skills")
       .eq("user_id", user!.id)
       .single();
-    if (data) setProfile(data as any);
+    if (data) setProfile(data);
   };
 
   const handleSave = async () => {
@@ -88,9 +88,9 @@ const Portfolio = () => {
 
     let error;
     if (editingId) {
-      ({ error } = await supabase.from("student_projects").update(payload).eq("id", editingId));
+      ({ error } = await (supabase as any).from("student_projects").update(payload).eq("id", editingId));
     } else {
-      ({ error } = await supabase.from("student_projects").insert(payload));
+      ({ error } = await (supabase as any).from("student_projects").insert(payload));
     }
 
     setSaving(false);
@@ -103,7 +103,7 @@ const Portfolio = () => {
   };
 
   const togglePublish = async (project: Project) => {
-    const { error } = await supabase.from("student_projects").update({ is_published: !project.is_published }).eq("id", project.id);
+    const { error } = await (supabase as any).from("student_projects").update({ is_published: !project.is_published }).eq("id", project.id);
     if (!error) {
       toast.success(project.is_published ? "Project hidden" : "Project published! 🌟");
       fetchProjects();
@@ -111,7 +111,7 @@ const Portfolio = () => {
   };
 
   const deleteProject = async (id: string) => {
-    const { error } = await supabase.from("student_projects").delete().eq("id", id);
+    const { error } = await (supabase as any).from("student_projects").delete().eq("id", id);
     if (!error) { toast.success("Project deleted"); fetchProjects(); }
   };
 
