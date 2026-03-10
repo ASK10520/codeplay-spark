@@ -1,6 +1,6 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Bell, MessageSquare, Settings, ChevronDown, User, LogOut } from "lucide-react";
+import { MessageSquare, Settings, ChevronDown, User, LogOut } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AdminSearchBar } from "./AdminSearchBar";
+import { AdminNotifications } from "./AdminNotifications";
 
 export function AdminTopNav() {
   const { user, signOut } = useAuth();
