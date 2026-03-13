@@ -24,6 +24,7 @@ export function Navbar() {
     { path: "/curriculum", label: "Curriculum", icon: BookOpen },
     { path: "/dashboard", label: "My Learning", icon: Sparkles },
     { path: "/achievements", label: "Achievements", icon: Trophy },
+    ...(user ? [{ path: "/portfolio", label: "Portfolio", icon: User }] : []),
     { path: "/about", label: "About", icon: Info },
     ...(hasRole("admin") ? [{ path: "/admin", label: "Admin", icon: Shield }] : []),
   ];
