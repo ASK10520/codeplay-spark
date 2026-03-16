@@ -5,21 +5,21 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, Play, RotateCcw, Lightbulb } from "lucide-react";
+import { ArrowLeft, Play, RotateCcw } from "lucide-react";
 import { AiTutorChat } from "@/components/tutor/AiTutorChat";
 import { PuzzleGrid } from "@/components/puzzle/PuzzleGrid";
 import { BlockPalette } from "@/components/puzzle/BlockPalette";
 import { CodeWorkspace } from "@/components/puzzle/CodeWorkspace";
 import { SuccessOverlay } from "@/components/puzzle/SuccessOverlay";
+import { HintSystem } from "@/components/puzzle/HintSystem";
 import { useGameEngine } from "@/components/puzzle/useGameEngine";
 import { BLOCK_DEFINITIONS } from "@/components/puzzle/puzzleData";
 import { CodeBlock } from "@/components/puzzle/types";
 
 const LessonPlayground = () => {
   const navigate = useNavigate();
-  const { robot, status, activeBlockId, errorMessage, reset, executeBlocks } = useGameEngine();
+  const { robot, status, activeBlockId, errorMessage, attemptCount, reset, executeBlocks } = useGameEngine();
   const [workspace, setWorkspace] = useState<CodeBlock[]>([]);
-  const [showHint, setShowHint] = useState(false);
   const [activeDragType, setActiveDragType] = useState<string | null>(null);
 
   const makeBlock = useCallback((type: string): CodeBlock => {
@@ -57,7 +57,7 @@ const LessonPlayground = () => {
       setWorkspace((prev) => [...prev, block]);
     } else if (overId.startsWith("container-")) {
       const parentId = over.data?.current?.parentId;
-      if (parentId && (type !== 'repeat' && type !== 'ifClear')) {
+      if (parentId && type !== 'repeat' && type !== 'ifClear') {
         setWorkspace((prev) =>
           prev.map((b) =>
             b.id === parentId
@@ -83,7 +83,13 @@ const LessonPlayground = () => {
     );
   };
 
-  const handleReset = () => {
+  // Reset only resets robot, keeps blocks in workspace
+  const handleResetRobot = () => {
+    reset();
+  };
+
+  // Full reset clears everything
+  const handleFullReset = () => {
     setWorkspace([]);
     reset();
   };
@@ -91,7 +97,6 @@ const LessonPlayground = () => {
   const handleRun = () => {
     if (workspace.length === 0 || status === 'running') return;
     reset();
-    // Small delay so reset completes
     setTimeout(() => executeBlocks(workspace), 50);
   };
 
@@ -134,26 +139,7 @@ const LessonPlayground = () => {
                     Help the robot reach the ⭐! Use the <strong>Repeat 3×</strong> block
                     to make your code shorter and smarter.
                   </p>
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full mb-3"
-                    onClick={() => setShowHint(!showHint)}
-                  >
-                    <Lightbulb className="w-4 h-4" />
-                    {showHint ? "Hide Hint" : "Need a Hint?"}
-                  </Button>
-
-                  {showHint && (
-                    <Card variant="flat" className="bg-star/10 border-star/30 mb-3">
-                      <CardContent className="p-3">
-                        <p className="text-sm font-nunito">
-                          💡 Try: Move Forward → Turn Right → then use "Repeat 3×" with Move Forward inside!
-                        </p>
-                      </CardContent>
-                    </Card>
-                  )}
+                  <HintSystem workspace={workspace} attemptCount={attemptCount} />
                 </CardContent>
               </Card>
 
@@ -167,7 +153,7 @@ const LessonPlayground = () => {
 
               {/* Error message */}
               {errorMessage && (
-                <Card variant="flat" className="bg-destructive/10 border-destructive/30">
+                <Card variant="flat" className="bg-destructive/10 border-destructive/30 animate-fade-in">
                   <CardContent className="p-3">
                     <p className="text-sm font-bold font-nunito text-foreground">{errorMessage}</p>
                   </CardContent>
@@ -193,15 +179,26 @@ const LessonPlayground = () => {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="font-fredoka font-bold">🎮 Your Code</h3>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleReset}
-                      disabled={status === 'running'}
-                    >
-                      <RotateCcw className="w-4 h-4 mr-1" />
-                      Reset
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleResetRobot}
+                        disabled={status === 'running'}
+                      >
+                        <RotateCcw className="w-4 h-4 mr-1" />
+                        Reset Robot
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleFullReset}
+                        disabled={status === 'running'}
+                        className="text-destructive hover:text-destructive"
+                      >
+                        Clear All
+                      </Button>
+                    </div>
                   </div>
                   <CodeWorkspace
                     blocks={workspace}
@@ -230,7 +227,7 @@ const LessonPlayground = () => {
 
         {/* Success Overlay */}
         {status === 'success' && (
-          <SuccessOverlay onReset={handleReset} onNext={() => navigate(-1)} />
+          <SuccessOverlay onReset={handleFullReset} onNext={() => navigate(-1)} />
         )}
 
         {/* Drag Overlay */}

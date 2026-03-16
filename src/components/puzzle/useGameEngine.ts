@@ -22,6 +22,20 @@ function isWalkable(grid: CellType[][], pos: Position): boolean {
   return grid[pos.row][pos.col] !== 'wall';
 }
 
+/** Validate blocks before execution — reject empty containers */
+function validateBlocks(blocks: CodeBlock[]): string | null {
+  for (const block of blocks) {
+    if ((block.type === 'repeat' || block.type === 'ifClear') && (!block.children || block.children.length === 0)) {
+      return `⚠️ Your "${block.label}" block is empty! Drag some blocks inside it first.`;
+    }
+    if (block.children) {
+      const childError = validateBlocks(block.children);
+      if (childError) return childError;
+    }
+  }
+  return null;
+}
+
 export function useGameEngine() {
   const [robot, setRobot] = useState<RobotState>({
     position: { ...LEVEL.start },
@@ -30,12 +44,15 @@ export function useGameEngine() {
   const [status, setStatus] = useState<ExecutionStatus>('idle');
   const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [attemptCount, setAttemptCount] = useState(0);
   const abortRef = useRef(false);
+  const statusRef = useRef<ExecutionStatus>('idle');
 
   const reset = useCallback(() => {
     abortRef.current = true;
     setRobot({ position: { ...LEVEL.start }, direction: LEVEL.startDirection });
     setStatus('idle');
+    statusRef.current = 'idle';
     setActiveBlockId(null);
     setErrorMessage(null);
   }, []);
@@ -43,9 +60,20 @@ export function useGameEngine() {
   const delay = (ms: number) => new Promise(r => setTimeout(r, ms));
 
   const executeBlocks = useCallback(async (blocks: CodeBlock[]) => {
+    // Validate before running
+    const validationError = validateBlocks(blocks);
+    if (validationError) {
+      setErrorMessage(validationError);
+      setStatus('error');
+      statusRef.current = 'error';
+      return;
+    }
+
     abortRef.current = false;
     setStatus('running');
+    statusRef.current = 'running';
     setErrorMessage(null);
+    setAttemptCount(prev => prev + 1);
 
     let currentRobot: RobotState = {
       position: { ...LEVEL.start },
@@ -66,8 +94,9 @@ export function useGameEngine() {
             col: currentRobot.position.col + delta.col,
           };
           if (!isWalkable(LEVEL.grid, next)) {
-            setErrorMessage('🚧 Oops! The robot hit a wall!');
+            setErrorMessage('🚧 Oops! The robot hit a wall! Try rearranging your blocks.');
             setStatus('error');
+            statusRef.current = 'error';
             return false;
           }
           currentRobot = { ...currentRobot, position: next };
@@ -108,9 +137,10 @@ export function useGameEngine() {
         }
       }
 
-      // Check win
+      // Check win after every step
       if (currentRobot.position.row === LEVEL.goal.row && currentRobot.position.col === LEVEL.goal.col) {
         setStatus('success');
+        statusRef.current = 'success';
         setActiveBlockId(null);
         return false; // stop further execution
       }
@@ -122,15 +152,17 @@ export function useGameEngine() {
       if (!ok) return;
     }
 
-    if (status !== 'success' && !abortRef.current) {
-      // finished but didn't reach goal
+    // statusRef may have been set to 'success' during async runBlock calls
+    const finalStatus = statusRef.current as ExecutionStatus;
+    if (finalStatus !== 'success' && !abortRef.current) {
       if (currentRobot.position.row !== LEVEL.goal.row || currentRobot.position.col !== LEVEL.goal.col) {
-        setErrorMessage("🤔 The robot didn't reach the star. Try again!");
+        setErrorMessage("🤔 The robot didn't reach the ⭐ goal. Try adjusting your blocks or using Repeat to simplify your solution.");
         setStatus('error');
+        statusRef.current = 'error';
       }
     }
     setActiveBlockId(null);
   }, []);
 
-  return { robot, status, activeBlockId, errorMessage, reset, executeBlocks };
+  return { robot, status, activeBlockId, errorMessage, attemptCount, reset, executeBlocks };
 }
