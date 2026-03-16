@@ -152,8 +152,9 @@ export function useGameEngine() {
       if (!ok) return;
     }
 
-    // Use ref instead of stale state closure
-    if (statusRef.current !== 'success' && !abortRef.current) {
+    // Use ref to avoid stale closure — status state is always 'running' here
+    const didSucceed = statusRef.current === 'success';
+    if (!didSucceed && !abortRef.current) {
       if (currentRobot.position.row !== LEVEL.goal.row || currentRobot.position.col !== LEVEL.goal.col) {
         setErrorMessage("🤔 The robot didn't reach the ⭐ goal. Try adjusting your blocks or using Repeat to simplify your solution.");
         setStatus('error');
